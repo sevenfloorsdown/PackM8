@@ -1,0 +1,37 @@
+{
+  "Root": "C:\\DSITec\\",
+  "RunningLogLength":  5,
+  "Logging": {
+    "LogLevel": "Verbose",
+    "LogFile": "packm8",
+    "DateTimeFormat": "dd/MM/yyyy hh:mm:ss.fff"
+  },
+  "Comment1": "Make sure PLULength and PPKLength-1 match the regex below;",
+  "Comment2": "that is {PLULength, PLULength} and {PPKLength-1, PPKLength-1}",
+  "InFeed1": {
+    "InFeedName": "Infeed1",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "<STX>",
+    "Footer": "<CR><LF>",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed1": {
+    "OutFeedName": "OutFeed1",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "<STX>",
+    "Footer": "<ETX>",
+    "PLULength": 5,
+    "PPKLength": 4,
+    "FixedAsciiData": "abcdef"
+  }
+}
