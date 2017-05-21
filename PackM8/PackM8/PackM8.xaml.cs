@@ -71,56 +71,58 @@ namespace PackM8
             this.Title = showInfo;
 
             RunningLogLength = ini.GetSettingInteger("RunningLogLength", 5);
+            NumChannels = ini.GetSettingInteger("NumberOfChannels", 5);
             if (RunningLogLength < 10) RunningLogLength = 10; // Arbitrary default
 
-            lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");
-            lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed2");
-            lineInput2.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed3");
-            lineInput3.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed4");
+            packM8Engine = new PackM8Engine(ini);
 
-            lineOutput0.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
-            lineOutput1.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
-            lineOutput2.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
-            lineOutput3.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
+            try
+            {
+                switch (NumChannels)
+                {
+                    case 1:
+                        lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");
+                        lineOutput0.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
+                        lineInputCxn0.Content = ini.GetSettingString("COMPort", "COM1", "InFeed1");
+                        lineOutputCxn0.Content = ini.GetSettingString("COMPort", "COM6", "OutFeed1");
+                        packM8Engine.Infeed[0].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        break;
+                    case 2:
+                        lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed2", "InFeed2");
+                        lineOutput1.Content = ini.GetSettingString("OutFeedName", "OutFeed2", "OutFeed2");
+                        lineInputCxn1.Content = ini.GetSettingString("COMPort", "COM2", "InFeed2");
+                        lineOutputCxn1.Content = ini.GetSettingString("COMPort", "COM7", "OutFeed2");
+                        packM8Engine.Infeed[1].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        break;
+                    case 3:
+                        lineInput2.Content = ini.GetSettingString("InFeedName", "InFeed3", "InFeed3");
+                        lineOutput2.Content = ini.GetSettingString("OutFeedName", "OutFeed3", "OutFeed3");
+                        lineInputCxn2.Content = ini.GetSettingString("COMPort", "COM3", "InFeed3");
+                        lineOutputCxn2.Content = ini.GetSettingString("COMPort", "COM8", "OutFeed3");
+                        packM8Engine.Infeed[2].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        break;
+                    case 4:
+                        lineInput3.Content = ini.GetSettingString("InFeedName", "InFeed4", "InFeed4");
+                        lineOutput3.Content = ini.GetSettingString("OutFeedName", "OutFeed4", "OutFeed4");
+                        lineInputCxn3.Content = ini.GetSettingString("COMPort", "COM4", "InFeed4");
+                        lineOutputCxn3.Content = ini.GetSettingString("COMPort", "COM9", "OutFeed4");
+                        packM8Engine.Infeed[3].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        break;
+                    default:
+                        lineInput4.Content = ini.GetSettingString("InFeedName", "InFeed5", "InFeed5");
+                        lineOutput4.Content = ini.GetSettingString("OutFeedName", "OutFeed5", "OutFeed5");
+                        lineInputCxn4.Content = ini.GetSettingString("COMPort", "COM5", "InFeed5");
+                        lineOutputCxn4.Content = ini.GetSettingString("COMPort", "COM10", "OutFeed5");
+                        packM8Engine.Infeed[4].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                AppLogger.Log(LogLevel.ERROR, String.Format("Incorrect number of channel set: {1} {2}.", NumChannels.ToString(), e.Message));
+            }
 
-            /*lineInputCxn0.Content = ini.Infeed1IPAddress + ":" + ini.Infeed1Port.ToString();
-            lineInputCxn1.Content = ini.Infeed2IPAddress + ":" + ini.Infeed2Port.ToString();
-            lineInputCxn2.Content = ini.Infeed3IPAddress + ":" + ini.Infeed3Port.ToString();
-            lineInputCxn3.Content = ini.Infeed4IPAddress + ":" + ini.Infeed4Port.ToString();
-
-            lineOutputCxn0.Content = ini.Outfeed1IPAddress + ":" + ini.Outfeed1Port.ToString();
-            lineOutputCxn1.Content = ini.Outfeed2IPAddress + ":" + ini.Outfeed2Port.ToString();
-            lineOutputCxn2.Content = ini.Outfeed3IPAddress + ":" + ini.Outfeed3Port.ToString();
-            lineOutputCxn3.Content = ini.Outfeed4IPAddress + ":" + ini.Outfeed4Port.ToString();*/
-
-            packM8Engine = new PackM8Engine();
-            packM8Engine.AppSettings = ini;
-
-            /*packM8Engine.Infeed[0].TcpConnected += new TcpEventHandler(InfeedConnectedListener0);
-            packM8Engine.Infeed[1].TcpConnected += new TcpEventHandler(InfeedConnectedListener1);
-            packM8Engine.Infeed[2].TcpConnected += new TcpEventHandler(InfeedConnectedListener2);
-            packM8Engine.Infeed[3].TcpConnected += new TcpEventHandler(InfeedConnectedListener3);
-
-            packM8Engine.Infeed[0].TcpDisconnected += new TcpEventHandler(InfeedDisconnectedListener0);
-            packM8Engine.Infeed[1].TcpDisconnected += new TcpEventHandler(InfeedDisconnectedListener1);
-            packM8Engine.Infeed[2].TcpDisconnected += new TcpEventHandler(InfeedDisconnectedListener2);
-            packM8Engine.Infeed[3].TcpDisconnected += new TcpEventHandler(InfeedDisconnectedListener3);
-
-            packM8Engine.Infeed[0].GeneralUseEvent += new TcpEventHandler(InputReceivedListener0);
-            packM8Engine.Infeed[1].GeneralUseEvent += new TcpEventHandler(InputReceivedListener1);
-            packM8Engine.Infeed[2].GeneralUseEvent += new TcpEventHandler(InputReceivedListener2);
-            packM8Engine.Infeed[3].GeneralUseEvent += new TcpEventHandler(InputReceivedListener3);
-
-            packM8Engine.Outfeed[0].TcpConnected += new TcpEventHandler(OutfeedConnectedListener0);
-            packM8Engine.Outfeed[1].TcpConnected += new TcpEventHandler(OutfeedConnectedListener1);
-            packM8Engine.Outfeed[2].TcpConnected += new TcpEventHandler(OutfeedConnectedListener2);
-            packM8Engine.Outfeed[3].TcpConnected += new TcpEventHandler(OutfeedConnectedListener3);
-
-            packM8Engine.Outfeed[0].TcpDisconnected += new TcpEventHandler(OutfeedDisconnectedListener0);
-            packM8Engine.Outfeed[1].TcpDisconnected += new TcpEventHandler(OutfeedDisconnectedListener1);
-            packM8Engine.Outfeed[2].TcpDisconnected += new TcpEventHandler(OutfeedDisconnectedListener2);
-            packM8Engine.Outfeed[3].TcpDisconnected += new TcpEventHandler(OutfeedDisconnectedListener3);
-
+            /*
             packM8Engine.Outfeed[0].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener0);
             packM8Engine.Outfeed[1].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener1);
             packM8Engine.Outfeed[2].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener2);
@@ -130,16 +132,7 @@ namespace PackM8
             // for future messages
             packM8Engine.MessageUpdated += new packM8EngineEventHandler(ModelMessageListener);
 
-            for (int i = 0; i < NumChannels; i++)
-            {
-                // We don't know yet if we're connected.
-                // If we are, the listeners later on would update
-                // the status indicators
-                UpdateInfeedLabel(i, AlertLevel.WARNING);
-                UpdateOutfeedLabel(i, AlertLevel.WARNING);
-            }
-
-            ShowRunningLogs(packM8Engine.RecipeFileLoaded);
+            ShowRunningLogs(packM8Engine.LookupLoaded);
 
             // For debugging purposes only -------------------------------------------
             /*bool swTrigEnabled = Properties.Settings.Default.EnableSWTrigger;
@@ -166,15 +159,6 @@ namespace PackM8
                                    = runningLog2.Visibility
                                    = runningLog1.Visibility
                                    = runningLog0.Visibility;
-        }
-
-        private void UpdateLogDisplay(int channel, string entry)
-        {
-            if (!this.Dispatcher.HasShutdownFinished)
-            {
-                if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, entry);
-                else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, entry); }));
-            }
         }
 
         private void SetLogEntry(int channel, string entry)
@@ -217,7 +201,7 @@ namespace PackM8
                     if (runningLog3.Items.Count > RunningLogLength) runningLog3.Items.RemoveAt(RunningLogLength);
                     break;
                 case 4:
-                    runningLog3.Items.Insert(0, listEntry);
+                    runningLog4.Items.Insert(0, listEntry);
                     if (runningLog4.Items.Count > RunningLogLength) runningLog4.Items.RemoveAt(RunningLogLength);
                     break;
                 default:
@@ -226,222 +210,18 @@ namespace PackM8
             }
         }
 
-        private void UpdateInfeedLabel(int channel, AlertLevel lvl)
-        {
+        private void InputReceivedListener(object sender, EventArgs e, int channel)
+        { 
             if (!this.Dispatcher.HasShutdownFinished)
             {
-                if (this.Dispatcher.CheckAccess()) SetInfeedLabelIndicator(channel, lvl);
-                else this.Dispatcher.Invoke((Action)(() => { SetInfeedLabelIndicator(channel, lvl); }));
+                if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, packM8Engine.Infeed[channel].InFeedData);
+                else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, packM8Engine.Infeed[channel].InFeedData); }));
             }
         }
-
-        private void SetInfeedLabelIndicator(int channel, AlertLevel lvl)
-        {
-            // default (Normal)
-            var weight = FontWeights.Normal;
-            var color = Brushes.Black;
-
-            switch (lvl)
-            {
-                case AlertLevel.WARNING:
-                    weight = FontWeights.Normal;
-                    color = Brushes.Orange;
-                    break;
-                case AlertLevel.ERROR:
-                    weight = FontWeights.Bold;
-                    color = Brushes.Red;
-                    break;
-            }
-
-            switch (channel)
-            {
-                case 4:
-                    lineInput4.FontWeight = lineInputCxn3.FontWeight = weight;
-                    lineInput4.Foreground = lineInputCxn3.Foreground = color;
-                    break;
-                case 3:
-                    lineInput3.FontWeight = lineInputCxn3.FontWeight = weight;
-                    lineInput3.Foreground = lineInputCxn3.Foreground = color;
-                    break;
-                case 2:
-                    lineInput2.FontWeight = lineInputCxn2.FontWeight = weight;
-                    lineInput2.Foreground = lineInputCxn2.Foreground = color;
-                    break;
-                case 1:
-                    lineInput1.FontWeight = lineInputCxn1.FontWeight = weight;
-                    lineInput1.Foreground = lineInputCxn1.Foreground = color;
-                    break;
-                default:
-                    lineInput0.FontWeight = lineInputCxn0.FontWeight = weight;
-                    lineInput0.Foreground = lineInputCxn0.Foreground = color;
-                    break;
-            }
-        }
-
-        private void UpdateOutfeedLabel(int channel, AlertLevel lvl)
-        {
-            if (!this.Dispatcher.HasShutdownFinished)
-            {
-                if (this.Dispatcher.CheckAccess()) SetOutfeedLabelIndicator(channel, lvl);
-                else this.Dispatcher.Invoke((Action)(() => { SetOutfeedLabelIndicator(channel, lvl); }));
-            }
-        }
-
-        private void SetOutfeedLabelIndicator(int channel, AlertLevel lvl)
-        {
-            // default (Normal)
-            var weight = FontWeights.Normal;
-            var color = Brushes.Black;
-
-            switch (lvl)
-            {
-                case AlertLevel.WARNING:
-                    weight = FontWeights.Normal;
-                    color = Brushes.Orange;
-                    break;
-                case AlertLevel.ERROR:
-                    weight = FontWeights.ExtraBold;
-                    color = Brushes.Red;
-                    break;
-            }
-
-            switch (channel)
-            {
-                case 4:
-                    lineOutput3.FontWeight = lineOutputCxn4.FontWeight = weight;
-                    lineOutput3.Foreground = lineOutputCxn4.Foreground = color;
-                    break;
-                case 3:
-                    lineOutput3.FontWeight = lineOutputCxn3.FontWeight = weight;
-                    lineOutput3.Foreground = lineOutputCxn3.Foreground = color;
-                    break;
-                case 2:
-                    lineOutput2.FontWeight = lineOutputCxn2.FontWeight = weight;
-                    lineOutput2.Foreground = lineOutputCxn2.Foreground = color;
-                    break;
-                case 1:
-                    lineOutput1.FontWeight = lineOutputCxn1.FontWeight = weight;
-                    lineOutput1.Foreground = lineOutputCxn1.Foreground = color;
-                    break;
-                default:
-                    lineOutput0.FontWeight = lineOutputCxn0.FontWeight = weight;
-                    lineOutput0.Foreground = lineOutputCxn0.Foreground = color;
-                    break;
-            }
-        }
-
-        //---------------------------------------------------------------------
-        private void CommonInfeedConnectedListener(object sender, int channel)
-        {
-            AppLogger.Log(LogLevel.INFO, channel.ToString() + ": Infeed connected");
-            UpdateInfeedLabel(channel, AlertLevel.NORMAL);
-        }
-
-        private void InfeedConnectedListener0(object sender, EventArgs e)
-        { CommonInfeedConnectedListener(sender, 0); }
-
-        private void InfeedConnectedListener1(object sender, EventArgs e)
-        { CommonInfeedConnectedListener(sender, 1); }
-
-        private void InfeedConnectedListener2(object sender, EventArgs e)
-        { CommonInfeedConnectedListener(sender, 2); }
-
-        private void InfeedConnectedListener3(object sender, EventArgs e)
-        { CommonInfeedConnectedListener(sender, 3); }
-
-        private void InfeedConnectedListener4(object sender, EventArgs e)
-        { CommonInfeedConnectedListener(sender, 4); }
-
-        //-----------------------------------------------------------------------
-        private void CommonInfeedDisconnectedListener(object sender, int channel)
-        {
-            AppLogger.Log(LogLevel.INFO, channel.ToString() + ": Infeed disconnected");
-            UpdateInfeedLabel(channel, AlertLevel.ERROR);
-            UpdateLogDisplay(channel, DateTime.Now.ToString() + "   Infeed ERROR");
-        }
-
-        private void InfeedDisconnectedListener0(object sender, EventArgs e)
-        { CommonInfeedDisconnectedListener(sender, 0); }
-
-        private void InfeedDisconnectedListener1(object sender, EventArgs e)
-        { CommonInfeedDisconnectedListener(sender, 1); }
-
-        private void InfeedDisconnectedListener2(object sender, EventArgs e)
-        { CommonInfeedDisconnectedListener(sender, 2); }
-
-        private void InfeedDisconnectedListener3(object sender, EventArgs e)
-        { CommonInfeedDisconnectedListener(sender, 3); }
-
-        private void InfeedDisconnectedListener4(object sender, EventArgs e)
-        { CommonInfeedDisconnectedListener(sender, 4); }
-
-        //-------------------------------------------------------------------
-        private void CommonInputReceivedListener(object sender, int channel)
-        { UpdateLogDisplay(channel, packM8Engine.InfeedInputString[channel]); }
-
-        private void InputReceivedListener0(object sender, EventArgs e)
-        { CommonInputReceivedListener(sender, 0); }
-
-        private void InputReceivedListener1(object sender, EventArgs e)
-        { CommonInputReceivedListener(sender, 1); }
-
-        private void InputReceivedListener2(object sender, EventArgs e)
-        { CommonInputReceivedListener(sender, 2); }
-
-        private void InputReceivedListener3(object sender, EventArgs e)
-        { CommonInputReceivedListener(sender, 3); }
-
-        private void InputReceivedListener4(object sender, EventArgs e)
-        { CommonInputReceivedListener(sender, 4); }
-
-        //-------------------------------------------------------------------
-        private void CommonOutfeedConnectedListener(object sender, int channel)
-        {
-            AppLogger.Log(LogLevel.INFO, channel.ToString() + ": Outfeed connected");
-            UpdateOutfeedLabel(channel, AlertLevel.NORMAL);
-        }
-
-        private void OutfeedConnectedListener0(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 0); }
-
-        private void OutfeedConnectedListener1(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 1); }
-
-        private void OutfeedConnectedListener2(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 2); }
-
-        private void OutfeedConnectedListener3(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 3); }
-
-        private void OutfeedConnectedListener4(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 4); }
-
-        //-----------------------------------------------------------------------
-        private void CommonOutfeedDisconnectedListener(object sender, int channel)
-        {
-            AppLogger.Log(LogLevel.INFO, channel.ToString() + ": Outfeed disconnected");
-            UpdateOutfeedLabel(channel, AlertLevel.ERROR);
-            UpdateLogDisplay(channel, DateTime.Now.ToString() + "   Outfeed ERROR");
-        }
-
-        private void OutfeedDisconnectedListener0(object sender, EventArgs e)
-        { CommonOutfeedConnectedListener(sender, 0); }
-
-        private void OutfeedDisconnectedListener1(object sender, EventArgs e)
-        { CommonOutfeedDisconnectedListener(sender, 1); }
-
-        private void OutfeedDisconnectedListener2(object sender, EventArgs e)
-        { CommonOutfeedDisconnectedListener(sender, 2); }
-
-        private void OutfeedDisconnectedListener3(object sender, EventArgs e)
-        { CommonOutfeedDisconnectedListener(sender, 3); }
-
-        private void OutfeedDisconnectedListener4(object sender, EventArgs e)
-        { CommonOutfeedDisconnectedListener(sender, 4); }
 
         //-------------------------------------------------------------------
         private void CommonOutputReceivedListener(object sender, int channel)
-        { UpdateLogDisplay(channel, packM8Engine.DisplayOutputString[channel]); }
+        { /*UpdateLogDisplay(channel, packM8Engine.Outfeed[channel].OutputMessage);*/ }
 
         private void OutputReceivedListener0(object sender, EventArgs e)
         { CommonOutputReceivedListener(sender, 0); }
@@ -462,8 +242,8 @@ namespace PackM8
         {
             for (int i = 0; i < NumChannels; i++)
             {
-                packM8Engine.Infeed[i].StopListening();
-                packM8Engine.Outfeed[i].StopListening();
+                packM8Engine.Infeed[i].Port.StopListening();
+                packM8Engine.Outfeed[i].Port.StopListening();
             }
             AppLogger.Log(LogLevel.INFO, "Closing window");
             AppLogger.Stop();
@@ -480,7 +260,7 @@ namespace PackM8
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            /*if (!packM8Engine.LoadRecipeTable(Properties.Settings.Default.DatabasePath))
+            /*if (!packM8Engine.LoadLookupFile(Properties.Settings.Default.DatabasePath))
                 MessageArea.Content = packM8Engine.Message;
             else
                 MessageArea.Content = "database refreshed on " + DateTime.Now.ToString();

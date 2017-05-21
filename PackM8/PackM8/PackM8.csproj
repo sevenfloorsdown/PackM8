@@ -58,6 +58,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="infeed.cs" />
+    <Compile Include="outfeed.cs" />
     <Compile Include="packM8Engine.cs" />
     <Compile Include="util\appLogger.cs" />
     <Compile Include="util\serialPortManager.cs" />

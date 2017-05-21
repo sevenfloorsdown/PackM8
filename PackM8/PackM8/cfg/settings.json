@@ -1,6 +1,8 @@
 {
   "Root": "C:\\DSITec\\",
-  "RunningLogLength":  5,
+  "RunningLogLength": 5,
+  "NumberOfChannels": 1,
+  "LookupFile":  "C:\\DSITec\\lookup.csv",
   "Logging": {
     "LogLevel": "Verbose",
     "LogFile": "packm8",
@@ -28,10 +30,9 @@
     "Databits": 8,
     "Parity": "None",
     "StopBits": 1,
-    "Header": "<STX>",
-    "Footer": "<ETX>",
+    "Header": "",
+    "Footer": "",
     "PLULength": 5,
     "PPKLength": 4,
-    "FixedAsciiData": "abcdef"
-  }
+  },
 }

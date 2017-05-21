@@ -15,7 +15,7 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Grid.ColumnSpan="2" Content="Refresh Database" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="111" Height="18" FontFamily="Arial" Click="Button_Click"/>
+        <Button Grid.ColumnSpan="2" Content="Refresh Database" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="111" Height="18" FontFamily="Arial" Click="Button_Click"/>
         <Label x:Name="lineInput0" Content="Scanner 1&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,32,0,0" FontFamily="Arial"/>
         <Label x:Name="lineInputCxn0" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,47,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
         <ListView x:Name="runningLog0" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,32,8,0" Grid.ColumnSpan="2" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -48,6 +48,6 @@
         <Label x:Name="lineOutputCxn4" Content="" HorizontalAlignment="Left" Margin="2,574,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial"/>
         <Button x:Name="AcquireButton" Grid.ColumnSpan="2" Content="Acquire" HorizontalAlignment="Left" Margin="816,10,0,0" VerticalAlignment="Top" Width="75" Click="AcquireButton_Click" FontFamily="Arial" Height="15"/>
         <ListBox x:Name="ChannelChoice" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="18" Margin="896,10,0,0" VerticalAlignment="Top" Width="60" FontFamily="Arial"/>
-        <Label x:Name="MessageArea" Grid.ColumnSpan="2" Content="" HorizontalAlignment="Left" Margin="169,11,0,0" VerticalAlignment="Top" Width="633" FontFamily="Arial" Height="20"/>
+        <Label x:Name="MessageArea" Grid.ColumnSpan="2" Content="" HorizontalAlignment="Left" Margin="169,0,0,0" VerticalAlignment="Top" Width="633" FontFamily="Arial" Height="26"/>
     </Grid>
 </Window>
