@@ -151,6 +151,7 @@ namespace PackM8
         {
             AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} updated with {1}", (index+1).ToString(), Infeed[index].InFeedData));
             // pass to output formatter, update display
+            LookUpPack();
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
@@ -165,7 +166,7 @@ namespace PackM8
 
             AppLogger.Log(LogLevel.INFO, String.Format("Infeed[{0}] received {1}", cIdx.ToString(), payload));
 
-            if (!recipeIsOK)
+            if (!lookupLoaded)
             {
                 msg = String.Format("Received {0} on channel {1} but no recipe file; clearing buffer instead",
                         payload, cIdx.ToString());
@@ -251,27 +252,37 @@ namespace PackM8
         public bool LoadLookupFile(string csvFilePath)
         {
             bool result = false;
+            string csvLine = "";
+            int LookUpColumnIndex = 0;
+            string lookupKey = AppSettings.GetSettingString("LookupKey", "");
             AppLogger.Log(LogLevel.INFO, "Loading lookup file " + csvFilePath);
             try
             {
-                LookupTable = new DataTable("Recipe");
+                LookupTable = new DataTable("LookupTable");
                 using (StreamReader sr = new StreamReader(csvFilePath))
                 {
                     while (!sr.EndOfStream)
                     {
-                        string[] rows = sr.ReadLine().Split(',');
+                        csvLine = sr.ReadLine();
+                        string[] rows = csvLine.Split(',');
                         if (LookupTable.Columns.Count == 0)
-                            for (int i = 0; i < rows.Length; i++) LookupTable.Columns.Add();
+                        {
+                            for (int i = 0; i < rows.Length; i++)
+                            {
+                                LookupTable.Columns.Add();
+                                if (rows[i].Replace("\"", "") == lookupKey) LookUpColumnIndex = i;
+                            }
+                        }
                         DataRow dr = LookupTable.NewRow();
-                        for (int i = 0; i < rows.Length; i++) dr[i] = rows[i];
+                        for (int i = 0; i < rows.Length; i++) dr[i] = rows[i].Replace("\"", "");
                         LookupTable.Rows.Add(dr);
                     }
                 }
-                // the barcodes will be the keys
-                // TODO: Add code that will catch if there are non-unique barcodes
-                LookupTable.PrimaryKey = new DataColumn[] { LookupTable.Columns[2] };
 
-                AppLogger.Log(LogLevel.VERBOSE, "Done loading lookup File ");
+                LookupTable.PrimaryKey = new DataColumn[] { LookupTable.Columns[LookUpColumnIndex] };
+
+                AppLogger.Log(LogLevel.VERBOSE, "Done loading lookup File");
+                AppLogger.Log(LogLevel.VERBOSE, String.Format("Look Up key is \"{0}\"", lookupKey));
                 result = true;
             }
             catch (DataException e)
@@ -284,7 +295,7 @@ namespace PackM8
 
             catch (Exception e)
             {
-                Message = String.Format("Error reading lookup file {0}: {1}", csvFilePath, e.Message);
+                Message = String.Format("Error reading lookup file {0}: '{1}', {2}", csvFilePath, csvLine, e.Message);
                 AppLogger.Log(LogLevel.ERROR, Message);
                 OnMessageUpdated(EventArgs.Empty);
                 result = false;
@@ -295,46 +306,47 @@ namespace PackM8
         }
 
 
-        public void DoLookup(int channel, string barcode)
+        public string LookUpPack(string key)
         {
-           /* string result = String.Empty;
-            string productName = String.Empty;
-            const string badProd = "BAD PRODUCT: ";
-            string tmp = String.Empty;
+            /* string result = String.Empty;
+             string productName = String.Empty;
+             const string badProd = "BAD PRODUCT: ";
+             string tmp = String.Empty;
 
-            DataRow foundEntry = RecipeTable.Rows.Find(barcode);
-            DateTime dt = DateTime.Now;
-            if (foundEntry == null)
-            {
-                tmp = barcode + " doesn't have a recipe entry";
-                AppLogger.Log(LogLevel.ERROR, logText(channel, tmp));
-                DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
-            }
-            else
-            {
-                productName = foundEntry[prodName1Index] + " " + foundEntry[prodName2Index];
-                try
-                {
-                    BestBeforeDate[channel] = GetBestBeforeDate(dt, Convert.ToInt32(foundEntry[weeksIndex]));
-                    OutfeedOutputString[channel] = BestBeforeDate[channel].ToString(OutfeedFormat).ToUpper();
-                    DisplayOutputString[channel] = dt.ToString() + spacer +
-                                                  Regex.Replace(OutfeedOutputString[channel], @"[\x00-\x1F]", string.Empty) +
-                                                  spacer + productName;
-                }
-                catch (Exception e)
-                {
-                    tmp = "Couldn't get BB date; check recipe file";
-                    AppLogger.Log(LogLevel.ERROR, e.Message + " " + tmp);
-                    DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
-                }
-            }
+             DataRow foundEntry = RecipeTable.Rows.Find(barcode);
+             DateTime dt = DateTime.Now;
+             if (foundEntry == null)
+             {
+                 tmp = barcode + " doesn't have a recipe entry";
+                 AppLogger.Log(LogLevel.ERROR, logText(channel, tmp));
+                 DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
+             }
+             else
+             {
+                 productName = foundEntry[prodName1Index] + " " + foundEntry[prodName2Index];
+                 try
+                 {
+                     BestBeforeDate[channel] = GetBestBeforeDate(dt, Convert.ToInt32(foundEntry[weeksIndex]));
+                     OutfeedOutputString[channel] = BestBeforeDate[channel].ToString(OutfeedFormat).ToUpper();
+                     DisplayOutputString[channel] = dt.ToString() + spacer +
+                                                   Regex.Replace(OutfeedOutputString[channel], @"[\x00-\x1F]", string.Empty) +
+                                                   spacer + productName;
+                 }
+                 catch (Exception e)
+                 {
+                     tmp = "Couldn't get BB date; check recipe file";
+                     AppLogger.Log(LogLevel.ERROR, e.Message + " " + tmp);
+                     DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
+                 }
+             }
 
-            // TODO: Figger out what the Outfeed sends back and do sumtin' about it
-            if (DisplayOutputString[channel].Contains(badProd))
-                ClearOutfeedBuffer(channel);
-            else
-                Outfeed[channel].Send(OutfeedOutputString[channel]);
-            Outfeed[channel].TriggerGeneralUseEvent();*/
+             // TODO: Figger out what the Outfeed sends back and do sumtin' about it
+             if (DisplayOutputString[channel].Contains(badProd))
+                 ClearOutfeedBuffer(channel);
+             else
+                 Outfeed[channel].Send(OutfeedOutputString[channel]);
+             Outfeed[channel].TriggerGeneralUseEvent();*/
+            return "place holder";
         }
     }
 }
