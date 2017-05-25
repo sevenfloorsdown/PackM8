@@ -2,7 +2,8 @@
   "Root": "C:\\DSITec\\",
   "RunningLogLength": 5,
   "NumberOfChannels": 1,
-  "LookupFile":  "C:\\DSITec\\lookup.csv",
+  "LookupFile": "C:\\DSITec\\data\\MasterProduct.csv",
+  "LookupKey":  "ProductCode",
   "Logging": {
     "LogLevel": "Verbose",
     "LogFile": "packm8",

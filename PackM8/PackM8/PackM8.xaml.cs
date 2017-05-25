@@ -260,11 +260,11 @@ namespace PackM8
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            /*if (!packM8Engine.LoadLookupFile(Properties.Settings.Default.DatabasePath))
+            if (!packM8Engine.LoadLookupFile(ini.GetSettingString("LookupFile", "")))
                 MessageArea.Content = packM8Engine.Message;
             else
                 MessageArea.Content = "database refreshed on " + DateTime.Now.ToString();
-            ShowRunningLogs(packM8Engine.RecipeFileLoaded);*/
+            ShowRunningLogs(packM8Engine.LookupLoaded);
         }
 
         private void ModelMessageListener(object sender, EventArgs e)
