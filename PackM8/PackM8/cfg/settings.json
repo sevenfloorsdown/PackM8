@@ -35,5 +35,16 @@
     "Footer": "",
     "PLULength": 5,
     "PPKLength": 4,
-  },
+    "QuantityLength":  2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  }
 }

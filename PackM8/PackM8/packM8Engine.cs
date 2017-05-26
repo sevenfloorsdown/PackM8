@@ -107,8 +107,19 @@ namespace PackM8
                     {
                         Header = StringUtils.ParseIntoASCII(AppSettings.GetSettingString("Header", "", section)),
                         Footer = StringUtils.ParseIntoASCII(AppSettings.GetSettingString("Footer", "", section))
-                        // additional fields
                     };
+                    for (int x = 1; x <= 2; x++)
+                    {
+                        String subsection = "Format" + x.ToString();
+                        MessageFormat tmpMsgFmt = new MessageFormat(
+                            AppSettings.GetSettingString("PayloadHeader", "", section, subsection),
+                            AppSettings.GetSettingString("PayloadFooter", "", section, subsection),
+                            AppSettings.GetSettingString("QuantityTag", "", section, subsection),
+                            AppSettings.GetSettingInteger("QuntityLength", 2, section)
+                            );
+                        tmpOutfeed.OutputMessage.Add(tmpMsgFmt);
+                    }
+                    
                     Outfeed.Add(tmpOutfeed);
                     //    if (i == 1)
                     //        LineInFeeds[j].Port.NewSerialDataReceived += new EventHandler<SerialDataEventArgs>(LineInFeed1NewDataReceived);
@@ -151,7 +162,7 @@ namespace PackM8
         {
             AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} updated with {1}", (index+1).ToString(), Infeed[index].InFeedData));
             // pass to output formatter, update display
-            LookUpPack();
+            //LookUpPack();
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
