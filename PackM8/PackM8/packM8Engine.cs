@@ -46,17 +46,6 @@ namespace PackM8
             }
             else
                 Message = "database loaded on " + DateTime.Now.ToString();
-
-            /*prodName1Index = AppSettings.RecipeProdName1Index;
-            prodName2Index = AppSettings.RecipeProdName2Index;
-            barcodeIndex = AppSettings.RecipeBarcodeIndex;
-            weeksIndex = AppSettings.RecipeWeeksIndex;
-
-            try { bestBeforeDayInt = (int)(DayOfWeek)Enum.Parse(typeof(DayOfWeek), AppSettings.BestBeforeDay.ToUpper()); }
-            catch (Exception e) { bestBeforeDayInt = (int)DayOfWeek.Saturday; }
-
-            // I don't want to keep parsing the string we need to send to the Outfeed
-            OutfeedFormat = GetOutfeedFormat(AppSettings.OutfeedOutputString);*/
         }
 
         public void InitializeFeeds()
@@ -101,12 +90,18 @@ namespace PackM8
                         BaudRate = AppSettings.GetSettingInteger("Baudrate", 9600, section),
                         DataBits = AppSettings.GetSettingInteger("Databits", 8, section),
                         Parity = (Parity)(Enum.Parse(typeof(Parity), AppSettings.GetSettingString("Parity", "None", section))),
-                        StopBits = (StopBits)AppSettings.GetSettingInteger("StopBits", 1, section)
+                        StopBits = (StopBits)AppSettings.GetSettingInteger("StopBits", 1, section),                    
                     };
                     OutFeed tmpOutfeed = new OutFeed(comSettings)
                     {
                         Header = StringUtils.ParseIntoASCII(AppSettings.GetSettingString("Header", "", section)),
-                        Footer = StringUtils.ParseIntoASCII(AppSettings.GetSettingString("Footer", "", section))
+                        Footer = StringUtils.ParseIntoASCII(AppSettings.GetSettingString("Footer", "", section)),
+                        InputPLULength = Infeed[i - 1].PLULength,
+                        InputPPKLength = Infeed[i - 1].PPKLength,
+                        OutputPLULength = AppSettings.GetSettingInteger("PLULength", Infeed[i - 1].PLULength, section),
+                        OutputPPKLength = AppSettings.GetSettingInteger("PPKLength", Infeed[i - 1].PPKLength - 1, section),
+                        ErrorPLU = AppSettings.GetSettingString("ErrorPLU", "xxxxx", section),
+                        ErrorPPK = AppSettings.GetSettingString("ErrorPPK", "yyy.yy ", section)
                     };
                     for (int x = 1; x <= 2; x++)
                     {
@@ -115,18 +110,12 @@ namespace PackM8
                             AppSettings.GetSettingString("PayloadHeader", "", section, subsection),
                             AppSettings.GetSettingString("PayloadFooter", "", section, subsection),
                             AppSettings.GetSettingString("QuantityTag", "", section, subsection),
-                            AppSettings.GetSettingInteger("QuntityLength", 2, section)
+                            AppSettings.GetSettingInteger("QuantityLength", 2, section)
                             );
                         tmpOutfeed.OutputMessage.Add(tmpMsgFmt);
                     }
                     
                     Outfeed.Add(tmpOutfeed);
-                    //    if (i == 1)
-                    //        LineInFeeds[j].Port.NewSerialDataReceived += new EventHandler<SerialDataEventArgs>(LineInFeed1NewDataReceived);
-                    //    if (i == 2)
-                    //        LineInFeeds[j].Port.NewSerialDataReceived += new EventHandler<SerialDataEventArgs>(LineInFeed2NewDataReceived);
-                    //               else  // OutFeed
-                    //  LineOutFeed.Port.NewSerialDataReceived += new EventHandler<SerialDataEventArgs>(LineOutFeedNewDataReceived);
                 }
                 catch (Exception e)
                 {
