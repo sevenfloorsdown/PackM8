@@ -5,6 +5,8 @@
   "LookupFile": "C:\\DSITec\\data\\MasterProduct.csv",
   "LookupKey": "ProductCode",
   "LookupErrorMessage": "Price/Poduct not found",
+  "LookupDescColumn": "Description",
+  "LookupPiecesColumn": "PiecesPerCarton",
   "Logging": {
     "LogLevel": "Verbose",
     "LogFile": "packm8",
@@ -20,7 +22,7 @@
     "Parity": "None",
     "StopBits": 1,
     "Header": "<STX>",
-    "Footer": "<CR><LF>",
+    "Footer": "<ETX>",
     "PLULength": 6,
     "PPKLength": 5,
     "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"

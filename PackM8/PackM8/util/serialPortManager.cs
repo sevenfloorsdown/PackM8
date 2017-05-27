@@ -69,7 +69,7 @@ namespace PackM8
             if (numDataRead == 0) return;
 
             // Send to whomever
-            if (NewSerialDataReceived != null) NewSerialDataReceived(this, new SerialDataEventArgs(data));
+            NewSerialDataReceived?.Invoke(this, new SerialDataEventArgs(data));
         }
         #endregion
 
@@ -353,8 +353,7 @@ namespace PackM8
         /// <param name="propertyName">Name of changed property</param>
         private void SendPropertyChangedEvent(String propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
     }

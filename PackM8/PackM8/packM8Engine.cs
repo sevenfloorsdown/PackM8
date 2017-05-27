@@ -12,16 +12,39 @@ namespace PackM8
 {
     public delegate void packM8EngineEventHandler(object sender, EventArgs e);
 
-    class PackM8Engine
+    public struct PacketInfo
+    {
+        public string PLU { get; set; }
+        public string PPK { get; set; }
+        public int Quantity { get; set; }
+        public string Description { get; set; }
+
+        public PacketInfo(string _plu, string _ppk, string _description, int _quantity)
+        {
+            PLU = _plu;
+            PPK = _ppk;
+            Quantity = _quantity;
+            Description = _description;
+        }
+    }
+
+    public class PackM8Engine
     {
         private int NumChannels;
         private bool lookupLoaded;
+        private int descriptionIndex;
+        private int piecesIndex;
+
+        public Queue<PacketInfo> DataHold { get; set; }
 
         public List<InFeed> Infeed { get; set; }
         public List<OutFeed> Outfeed { get; set; }
         public DataTable LookupTable { get; set; }
-        public DateTime[] BestBeforeDate { get; set; }
+        public string LookUpErrorMessage { get; set; }
         public bool LookupLoaded { get { return lookupLoaded; } }
+        public List<string> InfeedMessage { get; set; }
+        public List<string> OutfeedMessage { get; set; }
+        public List<string> DisplayMessage { get; set; }
 
         public settingsJSONutils AppSettings { get; set; }
 
@@ -29,15 +52,20 @@ namespace PackM8
 
         public event packM8EngineEventHandler MessageUpdated;
 
-        protected virtual void OnMessageUpdated(EventArgs e) { if (MessageUpdated != null) MessageUpdated(this, e); }
+        protected virtual void OnMessageUpdated(EventArgs e) { MessageUpdated?.Invoke(this, e); }
 
         public PackM8Engine(settingsJSONutils settings)
         {
             AppSettings = settings;
             NumChannels = AppSettings.GetSettingInteger("NumberOfChannels", 5);
-            InitializeFeeds();
+            InfeedMessage = new List<string>();
+            OutfeedMessage = new List<string>();
+            DisplayMessage = new List<string>();
 
+            InitializeFeeds();
+            LookUpErrorMessage = AppSettings.GetSettingString("LookupErrorMessage", "Product not found");
             String lookupFile = AppSettings.GetSettingString("LookupFile", ".");
+            
 
             if (!LoadLookupFile(lookupFile))
             {
@@ -46,6 +74,8 @@ namespace PackM8
             }
             else
                 Message = "database loaded on " + DateTime.Now.ToString();
+
+            DataHold = new Queue<PacketInfo>();
         }
 
         public void InitializeFeeds()
@@ -78,8 +108,10 @@ namespace PackM8
                         PPKLength = AppSettings.GetSettingInteger("PPKLength", 5, section)
                     };
                     Infeed.Add(tmpInfeed);
+                    InfeedMessage.Add("");
 
-                    Infeed[i-1].DataUpdated += new InfeedEventHandler(InfeedDataReceivedListener);
+                    Infeed[i-1].DataUpdated += new InfeedEventHandler(InfeedDataUpdatedListener);
+                    Infeed[i-1].DataReceived += new InfeedEventHandler(InfeedDataReceivedListener);
 
                     AppLogger.Log(LogLevel.INFO, "Initializing Outfeeds...");
                     String nuIndex = (i + NumChannels).ToString();
@@ -116,6 +148,8 @@ namespace PackM8
                     }
                     
                     Outfeed.Add(tmpOutfeed);
+                    OutfeedMessage.Add("");
+                    DisplayMessage.Add("");
                 }
                 catch (Exception e)
                 {
@@ -132,7 +166,7 @@ namespace PackM8
                 try
                 {
                     Infeed[i].Port.StartListening();
-                    Outfeed[i].Port.StartListening();
+                    //Outfeed[i].Port.StartListening(); // CHIMICHANGA
                 }
                 catch (Exception e)
                 {
@@ -149,9 +183,27 @@ namespace PackM8
 
         private void InfeedDataUpdatedListener(object sender, EventArgs e, int index)
         {
-            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} updated with {1}", (index+1).ToString(), Infeed[index].InFeedData));
-            // pass to output formatter, update display
-            //LookUpPack();
+            string infeedData = Infeed[index].InFeedData;
+            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} updated with {1}", (index+1).ToString(), infeedData));
+            int x = infeedData.IndexOf(",") + 1; 
+            string plu = infeedData.Substring(0, Infeed[index].PLULength);
+            string ppk = infeedData.Substring(x, Infeed[index].PPKLength-1);
+            string description = String.Empty;
+            int quantity = 0;
+            if (LookUpPack(index, plu, ref description, ref quantity))
+            {
+                DataHold.Enqueue(new PacketInfo(plu, ppk, description, quantity));
+            }
+            else
+            {
+                //esult = Outfeed[channel].CreateErrorOutputMessage(LookUpErrorMessage, 1);
+            }
+            /*
+             * When product 2 comes in and differs from product 1 locked in send scenario 1. That message should contain 
+             * product 1 payload . I can only assume that message in scenario 1 cause the screen to blink as no other
+             * messages are sent . Scenario 2 is product 2 the new product that differed . This is sent 15 secs later . 
+             * This message is held on the screen . You can see scenario 1 and 2 are different so I assume one allows blinking .
+             */
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
@@ -255,6 +307,8 @@ namespace PackM8
             string csvLine = "";
             int LookUpColumnIndex = 0;
             string lookupKey = AppSettings.GetSettingString("LookupKey", "");
+            string _desCol = AppSettings.GetSettingString("LookupDescColumn", "");
+            string _piecesCol = AppSettings.GetSettingString("LookupPiecesColumn", "");
             AppLogger.Log(LogLevel.INFO, "Loading lookup file " + csvFilePath);
             try
             {
@@ -270,13 +324,21 @@ namespace PackM8
                             for (int i = 0; i < rows.Length; i++)
                             {
                                 LookupTable.Columns.Add();
-                                if (rows[i].Replace("\"", "") == lookupKey) LookUpColumnIndex = i;
+                                string cur = rows[i].Replace("\"", "");
+                                if (cur == lookupKey)
+                                    LookUpColumnIndex = i;
+                                else if (cur == _desCol)
+                                    descriptionIndex = i;
+                                else if (cur == _piecesCol)
+                                    piecesIndex = i;
                             }
                         }
                         DataRow dr = LookupTable.NewRow();
                         for (int i = 0; i < rows.Length; i++) dr[i] = rows[i].Replace("\"", "");
                         LookupTable.Rows.Add(dr);
                     }
+                    if (String.IsNullOrEmpty(_desCol)) descriptionIndex = 1;
+                    if (String.IsNullOrEmpty(_piecesCol)) piecesIndex = 2;
                 }
 
                 LookupTable.PrimaryKey = new DataColumn[] { LookupTable.Columns[LookUpColumnIndex] };
@@ -306,47 +368,26 @@ namespace PackM8
         }
 
 
-        public string LookUpPack(string key)
+        public bool LookUpPack(int channel, string key, ref string description, ref int quantity)
         {
-            /* string result = String.Empty;
-             string productName = String.Empty;
-             const string badProd = "BAD PRODUCT: ";
-             string tmp = String.Empty;
+            string result = String.Empty;
+            string tmp = String.Empty;
 
-             DataRow foundEntry = RecipeTable.Rows.Find(barcode);
-             DateTime dt = DateTime.Now;
-             if (foundEntry == null)
-             {
-                 tmp = barcode + " doesn't have a recipe entry";
-                 AppLogger.Log(LogLevel.ERROR, logText(channel, tmp));
-                 DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
-             }
-             else
-             {
-                 productName = foundEntry[prodName1Index] + " " + foundEntry[prodName2Index];
-                 try
-                 {
-                     BestBeforeDate[channel] = GetBestBeforeDate(dt, Convert.ToInt32(foundEntry[weeksIndex]));
-                     OutfeedOutputString[channel] = BestBeforeDate[channel].ToString(OutfeedFormat).ToUpper();
-                     DisplayOutputString[channel] = dt.ToString() + spacer +
-                                                   Regex.Replace(OutfeedOutputString[channel], @"[\x00-\x1F]", string.Empty) +
-                                                   spacer + productName;
-                 }
-                 catch (Exception e)
-                 {
-                     tmp = "Couldn't get BB date; check recipe file";
-                     AppLogger.Log(LogLevel.ERROR, e.Message + " " + tmp);
-                     DisplayOutputString[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + spacer + badProd + tmp;
-                 }
-             }
-
-             // TODO: Figger out what the Outfeed sends back and do sumtin' about it
-             if (DisplayOutputString[channel].Contains(badProd))
-                 ClearOutfeedBuffer(channel);
-             else
-                 Outfeed[channel].Send(OutfeedOutputString[channel]);
-             Outfeed[channel].TriggerGeneralUseEvent();*/
-            return "place holder";
+            DataRow foundEntry = LookupTable.Rows.Find(key);
+            DateTime dt = DateTime.Now;
+            if (foundEntry == null)
+            {
+                tmp = key + " is not in product list";
+                AppLogger.Log(LogLevel.ERROR, LogText(channel, tmp));
+                OutfeedMessage[channel] = dt.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + " " + tmp;
+                return false;
+            }
+            else
+            {
+                description = foundEntry[descriptionIndex].ToString();
+                quantity = Convert.ToInt32(foundEntry[piecesIndex]);
+                return true;
+            }
         }
     }
 }

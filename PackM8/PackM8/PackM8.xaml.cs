@@ -75,6 +75,7 @@ namespace PackM8
             if (RunningLogLength < 10) RunningLogLength = 10; // Arbitrary default
 
             packM8Engine = new PackM8Engine(ini);
+            packM8Engine.StartEngine();
 
             try
             {
@@ -161,17 +162,23 @@ namespace PackM8
                                    = runningLog0.Visibility;
         }
 
+
+        private void UpdateLogDisplay(int channel, string entry)
+        {
+            if (!this.Dispatcher.HasShutdownFinished)
+            {
+                if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, entry);
+                else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, entry); }));
+            }
+        }
+
         private void SetLogEntry(int channel, string entry)
         {
             // default (Normal)
             var weight = FontWeights.Normal;
             var color = Brushes.Black;
 
-            if (entry.Contains("BAD PRODUCT") ||
-                entry.Contains("NO READ") ||
-                entry.Contains("MULTIPLE BARCODES") ||
-                entry.Contains("Infeed ERROR") ||
-                entry.Contains("Outfeed ERROR"))
+            if (entry.Contains("ERROR"))
             {
                 weight = FontWeights.Bold;
                 color = Brushes.Red;
@@ -214,14 +221,14 @@ namespace PackM8
         { 
             if (!this.Dispatcher.HasShutdownFinished)
             {
-                if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, packM8Engine.Infeed[channel].InFeedData);
-                else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, packM8Engine.Infeed[channel].InFeedData); }));
+                if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, packM8Engine.InfeedMessage[channel]);
+                else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, packM8Engine.InfeedMessage[channel]); }));
             }
         }
 
         //-------------------------------------------------------------------
         private void CommonOutputReceivedListener(object sender, int channel)
-        { /*UpdateLogDisplay(channel, packM8Engine.Outfeed[channel].OutputMessage);*/ }
+        { UpdateLogDisplay(channel, packM8Engine.OutfeedMessage[channel]); }
 
         private void OutputReceivedListener0(object sender, EventArgs e)
         { CommonOutputReceivedListener(sender, 0); }

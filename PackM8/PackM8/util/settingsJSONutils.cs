@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PackM8
 {
-    class settingsJSONutils
+    public class settingsJSONutils
     {
         #region Properties
         public string SettingsFile { get { return settingsFile; } set { LoadSettingsFile(value); } }
