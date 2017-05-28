@@ -174,7 +174,7 @@ namespace PackM8
                 try
                 {
                     Infeed[i].Port.StartListening();
-                    //Outfeed[i].Port.StartListening(); // CHIMICHANGA
+                    Outfeed[i].Port.StartListening(); 
                 }
                 catch (Exception e)
                 {
@@ -203,7 +203,8 @@ namespace PackM8
         private void InfeedDataUpdatedListener(object sender, EventArgs e, int index)
         {
             string infeedData = Infeed[index].InFeedData;
-            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} updated with {1}", (index+1).ToString(), infeedData));
+            InfeedMessage[index] = String.Format("Infeed {0} updated with {1}", (index + 1).ToString(), infeedData);
+            AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
             int x = infeedData.IndexOf(",") + 1; 
             string plu = infeedData.Substring(0, Infeed[index].PLULength);
             string ppk = infeedData.Substring(x, Infeed[index].PPKLength-1);
@@ -231,7 +232,8 @@ namespace PackM8
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
         {
-           AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} received data: {1}", index.ToString(), Infeed[index].ReceivedData));
+           InfeedMessage[index] = String.Format("Infeed {0} received data: {1}", (index+1).ToString(), Infeed[index].ReceivedData);
+           AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
         }
 
         private void OutfeedDataReceivedListener(object sender, EventArgs e)

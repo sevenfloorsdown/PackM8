@@ -87,6 +87,7 @@ namespace PackM8
                         lineInputCxn0.Content = ini.GetSettingString("COMPort", "COM1", "InFeed1");
                         lineOutputCxn0.Content = ini.GetSettingString("COMPort", "COM6", "OutFeed1");
                         packM8Engine.Infeed[0].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                        packM8Engine.Infeed[0].DataReceived += new InfeedEventHandler(InputReceivedListener);
                         break;
                     case 2:
                         lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed2", "InFeed2");
@@ -123,11 +124,7 @@ namespace PackM8
                 AppLogger.Log(LogLevel.ERROR, String.Format("Incorrect number of channel set: {1} {2}.", NumChannels.ToString(), e.Message));
             }
 
-            /*
-            packM8Engine.Outfeed[0].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener0);
-            packM8Engine.Outfeed[1].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener1);
-            packM8Engine.Outfeed[2].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener2);
-            packM8Engine.Outfeed[3].GeneralUseEvent += new TcpEventHandler(OutputReceivedListener3);*/
+            
 
             MessageArea.Content = packM8Engine.Message;
             // for future messages
