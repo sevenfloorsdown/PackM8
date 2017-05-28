@@ -16,15 +16,11 @@ namespace PackM8
     {
         public string PLU { get; set; }
         public string PPK { get; set; }
-        public int Quantity { get; set; }
-        public string Description { get; set; }
 
-        public PacketInfo(string _plu, string _ppk, string _description, int _quantity)
+        public PacketInfo(string _plu, string _ppk)
         {
             PLU = _plu;
             PPK = _ppk;
-            Quantity = _quantity;
-            Description = _description;
         }
     }
 
@@ -34,8 +30,9 @@ namespace PackM8
         private bool lookupLoaded;
         private int descriptionIndex;
         private int piecesIndex;
+        private List<Timer> scenTimer;
 
-        public Queue<PacketInfo> DataHold { get; set; }
+        public List<Queue<PacketInfo>> DataHold { get; set; }
 
         public List<InFeed> Infeed { get; set; }
         public List<OutFeed> Outfeed { get; set; }
@@ -74,21 +71,25 @@ namespace PackM8
             }
             else
                 Message = "database loaded on " + DateTime.Now.ToString();
-
-            DataHold = new Queue<PacketInfo>();
         }
 
         public void InitializeFeeds()
         {
             SerialSettings comSettings;
-            Infeed = new List<InFeed>();
-            Outfeed = new List<OutFeed>();
+
+            Infeed    = new List<InFeed>();
+            Outfeed   = new List<OutFeed>();
+            scenTimer = new List<Timer>();
+            DataHold  = new List<Queue<PacketInfo>>();
+
+            int timerLag = 0;
             for (int i = 1; i <= NumChannels; i++)
             {
                 String index = i.ToString();
                 String section = "InFeed" + index;
                 try
                 {
+                    timerLag = AppSettings.GetSettingInteger("ScenarioFollowUpSec", 15) * 1000;
                     AppLogger.Log(LogLevel.INFO, "Initializing Infeeds...");
                     comSettings = new SerialSettings()
                     {
@@ -109,6 +110,13 @@ namespace PackM8
                     };
                     Infeed.Add(tmpInfeed);
                     InfeedMessage.Add("");
+
+                    Timer tmpTimer = new Timer(timerLag);
+                    tmpTimer.Elapsed += OnTimerElapsed;
+                    scenTimer.Add(tmpTimer);
+
+                    Queue<PacketInfo> tmpDataHold = new Queue<PacketInfo>();
+                    DataHold.Add(tmpDataHold);
 
                     Infeed[i-1].DataUpdated += new InfeedEventHandler(InfeedDataUpdatedListener);
                     Infeed[i-1].DataReceived += new InfeedEventHandler(InfeedDataReceivedListener);
@@ -175,10 +183,21 @@ namespace PackM8
             }
         }
 
-        public void SendTrigger(int channel)
+        private void LookUpAndSend(int index, int scenario)
         {
-            //AppLogger.Log(LogLevel.INFO, "Sending software trigger to Infeed " + channel.ToString());
-            //Infeed[channel].Send(Properties.Settings.Default.DebugSWTrigger);
+            string description = String.Empty;
+            int quantity = 0;
+
+            PacketInfo onHold = DataHold[index].Dequeue();
+            if (LookUpPack(index, onHold.PLU, ref description, ref quantity))
+                DisplayMessage[index] = Outfeed[index].CreateOutputMessage(onHold.PLU,
+                                    onHold.PPK,
+                                    quantity,
+                                    description,
+                                    1);
+            else
+                Outfeed[index].CreateErrorOutputMessage(LookUpErrorMessage, 1);
+            Outfeed[index].SendOutputMessage();
         }
 
         private void InfeedDataUpdatedListener(object sender, EventArgs e, int index)
@@ -188,84 +207,31 @@ namespace PackM8
             int x = infeedData.IndexOf(",") + 1; 
             string plu = infeedData.Substring(0, Infeed[index].PLULength);
             string ppk = infeedData.Substring(x, Infeed[index].PPKLength-1);
-            string description = String.Empty;
-            int quantity = 0;
-            if (LookUpPack(index, plu, ref description, ref quantity))
+            DataHold[index].Enqueue(new PacketInfo(plu, ppk));
+
+            if (DataHold[index].Count > 1)
             {
-                DataHold.Enqueue(new PacketInfo(plu, ppk, description, quantity));
+                Infeed[index].SendScenario2 = true;
+                scenTimer[index].Start();
+                LookUpAndSend(index, 1);
             }
-            else
+        }
+
+        private void OnTimerElapsed(Object source, ElapsedEventArgs e)
+        {
+            for (int i = 0; i <Infeed.Count; i++)
             {
-                //esult = Outfeed[channel].CreateErrorOutputMessage(LookUpErrorMessage, 1);
+                if (Infeed[i].SendScenario2)
+                {
+                    Infeed[i].SendScenario2 = false;
+                    LookUpAndSend(i, 2);
+                }
             }
-            /*
-             * When product 2 comes in and differs from product 1 locked in send scenario 1. That message should contain 
-             * product 1 payload . I can only assume that message in scenario 1 cause the screen to blink as no other
-             * messages are sent . Scenario 2 is product 2 the new product that differed . This is sent 15 secs later . 
-             * This message is held on the screen . You can see scenario 1 and 2 are different so I assume one allows blinking .
-             */
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
         {
            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} received data: {1}", index.ToString(), Infeed[index].ReceivedData));
-        }
-
-        private void ProcessBarcode(int cIdx, string payload)
-        {
-            /*string barcode = String.Empty;
-            string msg = String.Empty;
-
-            AppLogger.Log(LogLevel.INFO, String.Format("Infeed[{0}] received {1}", cIdx.ToString(), payload));
-
-            if (!lookupLoaded)
-            {
-                msg = String.Format("Received {0} on channel {1} but no recipe file; clearing buffer instead",
-                        payload, cIdx.ToString());
-                AppLogger.Log(LogLevel.ERROR, msg);
-                ClearOutfeedBuffer(cIdx);
-                // at this point, it would be a good idea to just stop the line
-                // but we don't have control over that
-            }
-
-            if ((new String('?', payload.Length)) == payload)
-            {
-                msg = "NO READ";
-                ClearOutfeedBuffer(cIdx);
-            }
-            else if ((new String('!', payload.Length)) == payload)
-            {
-                msg = "MULTIPLE BARCODES OR CHECK BOX SPACING";
-                ClearOutfeedBuffer(cIdx);
-            }
-            else
-            {
-                if (payload.Length < heartbeat.Length)
-                {
-                    msg = String.Format("Infeed {0} ERROR: Unknown Infeed message: {1}",
-                        cIdx.ToString(), payload);
-                    AppLogger.Log(LogLevel.ERROR, msg);
-                }
-                else if (payload.Substring(0, heartbeat.Length).ToUpper() == heartbeat)
-                {
-                    tickOverTimer(cIdx);
-                    // TBD: send a response in the future
-                }
-                else
-                    msg = barcode = payload;
-            }
-
-            if (msg != String.Empty)
-            {
-                InfeedInputString[cIdx] = DateTime.Now.ToString() + spacer + msg;
-                Infeed[cIdx].TriggerGeneralUseEvent();
-                tickOverTimer(cIdx);
-            }
-
-            if (barcode != String.Empty)
-            {            
-                DoRecipeLookup(cIdx, barcode);
-            }*/
         }
 
         private void OutfeedDataReceivedListener(object sender, EventArgs e)
@@ -282,21 +248,6 @@ namespace PackM8
                 Infeed[i].Port.StopListening();
                 Outfeed[i].Port.StopListening();
             }
-        }
-
-
-        public string GetOutfeedFormat(string curFormatString)
-        {
-            String result = String.Empty;
-            var tmp = StringUtils.ParseIntoASCII(curFormatString);
-            tmp = tmp.Replace("%%B/B DATE%%", "dd MMM yy");
-            result = tmp.Replace("%%TIME%%", "HH:mm");
-            return result;
-        }
-
-        private void ClearOutfeedBuffer(int channel)
-        {
-            //Outfeed[channel].Send(OutfeedFormat.Replace("B/B dd MMM yy HH:mm", String.Empty));
         }
 
         private string LogText(int channel, string msg) { return String.Format("Channel[{0}]: {1}", channel.ToString(), msg); }

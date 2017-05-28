@@ -22,6 +22,7 @@ namespace PackM8
         public bool CheckMessageFormat { get; set; }
         public int PLULength { get; set; }
         public int PPKLength { get; set; }
+        public bool SendScenario2 { get; set; }
         public event InfeedEventHandler DataUpdated = delegate { };
         public event InfeedEventHandler DataReceived = delegate { };
 
@@ -46,6 +47,7 @@ namespace PackM8
                 Settings = settings
             };
             Port.NewSerialDataReceived += new EventHandler<SerialDataEventArgs>(SerialDataReceived);
+            SendScenario2 = false;
         }
 
         void SerialDataReceived(object sender, SerialDataEventArgs e)

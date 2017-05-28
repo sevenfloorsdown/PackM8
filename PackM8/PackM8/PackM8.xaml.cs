@@ -281,7 +281,7 @@ namespace PackM8
 
         // For debugging-mode only
         private void AcquireButton_Click(object sender, RoutedEventArgs e)
-        { packM8Engine.SendTrigger(ChannelChoice.SelectedIndex); }
+        { }
 
     }
 

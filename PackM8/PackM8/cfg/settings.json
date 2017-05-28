@@ -7,6 +7,7 @@
   "LookupErrorMessage": "Price/Poduct not found",
   "LookupDescColumn": "Description",
   "LookupPiecesColumn": "PiecesPerCarton",
+  "ScenarioFollowUpSec":  3,
   "Logging": {
     "LogLevel": "Verbose",
     "LogFile": "packm8",
