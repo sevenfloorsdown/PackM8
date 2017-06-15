@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Timers;
+using System.Text.RegularExpressions;
 
 namespace PackM8
 {
     public delegate void packM8EngineEventHandler(object sender, EventArgs e);
+    public delegate void packM8ChannelEventHandler(object sender, EventArgs e, int i);
 
     public struct PacketInfo
     {
@@ -48,8 +47,16 @@ namespace PackM8
         public string Message { get; set; }
 
         public event packM8EngineEventHandler MessageUpdated;
+        public event packM8ChannelEventHandler DisplayUpdated;
 
         protected virtual void OnMessageUpdated(EventArgs e) { MessageUpdated?.Invoke(this, e); }
+        protected virtual void OnChannelUpdated(EventArgs e, int channel) { DisplayUpdated?.Invoke(this, e, channel); }
+
+        public string StringifyControlChars(String input)
+        {
+            return Regex.Replace(input, @"\p{Cc}",
+                a => string.Format("[{0:X2}]", (byte)a.Value[0]));
+        }
 
         public PackM8Engine(settingsJSONutils settings)
         {
@@ -113,9 +120,11 @@ namespace PackM8
 
                     Timer tmpTimer = new Timer(timerLag);
                     tmpTimer.Elapsed += OnTimerElapsed;
+                    tmpTimer.AutoReset = false;
                     scenTimer.Add(tmpTimer);
 
                     Queue<PacketInfo> tmpDataHold = new Queue<PacketInfo>();
+                    tmpDataHold.Enqueue(new PacketInfo("", ""));
                     DataHold.Add(tmpDataHold);
 
                     Infeed[i-1].DataUpdated += new InfeedEventHandler(InfeedDataUpdatedListener);
@@ -139,17 +148,15 @@ namespace PackM8
                         InputPLULength = Infeed[i - 1].PLULength,
                         InputPPKLength = Infeed[i - 1].PPKLength,
                         OutputPLULength = AppSettings.GetSettingInteger("PLULength", Infeed[i - 1].PLULength, section),
-                        OutputPPKLength = AppSettings.GetSettingInteger("PPKLength", Infeed[i - 1].PPKLength - 1, section),
-                        ErrorPLU = AppSettings.GetSettingString("ErrorPLU", "xxxxx", section),
-                        ErrorPPK = AppSettings.GetSettingString("ErrorPPK", "yyy.yy ", section)
+                        OutputPPKLength = AppSettings.GetSettingInteger("PPKLength", Infeed[i - 1].PPKLength - 1, section)
                     };
                     for (int x = 1; x <= 2; x++)
                     {
                         String subsection = "Format" + x.ToString();
                         MessageFormat tmpMsgFmt = new MessageFormat(
-                            AppSettings.GetSettingString("PayloadHeader", "", section, subsection),
-                            AppSettings.GetSettingString("PayloadFooter", "", section, subsection),
-                            AppSettings.GetSettingString("QuantityTag", "", section, subsection),
+                            StringUtils.ParseIntoASCII(AppSettings.GetSettingString("PayloadHeader", "", section, subsection)),
+                            StringUtils.ParseIntoASCII(AppSettings.GetSettingString("PayloadFooter", "", section, subsection)),
+                            StringUtils.ParseIntoASCII(AppSettings.GetSettingString("QuantityTag", "", section, subsection)),
                             AppSettings.GetSettingInteger("QuantityLength", 2, section)
                             );
                         tmpOutfeed.OutputMessage.Add(tmpMsgFmt);
@@ -186,35 +193,51 @@ namespace PackM8
         private void LookUpAndSend(int index, int scenario)
         {
             string description = String.Empty;
+            string outputMsg = String.Empty;
             int quantity = 0;
 
-            PacketInfo onHold = DataHold[index].Dequeue();
+            PacketInfo onHold = DataHold[index].Peek();
+            if (scenario == 1)
+                onHold = DataHold[index].Dequeue();
             if (LookUpPack(index, onHold.PLU, ref description, ref quantity))
-                DisplayMessage[index] = Outfeed[index].CreateOutputMessage(onHold.PLU,
+                outputMsg = Outfeed[index].CreateOutputMessage(onHold.PLU,
                                     onHold.PPK,
                                     quantity,
                                     description,
-                                    1);
+                                    scenario);
             else
-                Outfeed[index].CreateErrorOutputMessage(LookUpErrorMessage, 1);
+                outputMsg = Outfeed[index].CreateErrorOutputMessage(onHold.PLU,
+                                    onHold.PPK,
+                                    LookUpErrorMessage, 1);
             Outfeed[index].SendOutputMessage();
+            DisplayMessage[index] = String.Format("Outfeed {0}: send {1}", (index + 1).ToString(), StringifyControlChars(outputMsg));
+            OnChannelUpdated(new EventArgs(), index);
+            AppLogger.Log(LogLevel.INFO, DisplayMessage[index]);
         }
 
         private void InfeedDataUpdatedListener(object sender, EventArgs e, int index)
         {
             string infeedData = Infeed[index].InFeedData;
-            InfeedMessage[index] = String.Format("Infeed {0} updated with {1}", (index + 1).ToString(), infeedData);
-            AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
-            int x = infeedData.IndexOf(",") + 1; 
-            string plu = infeedData.Substring(0, Infeed[index].PLULength);
-            string ppk = infeedData.Substring(x, Infeed[index].PPKLength-1);
-            DataHold[index].Enqueue(new PacketInfo(plu, ppk));
-
-            if (DataHold[index].Count > 1)
+            if (scenTimer[index].Enabled)
             {
-                Infeed[index].SendScenario2 = true;
-                scenTimer[index].Start();
-                LookUpAndSend(index, 1);
+                InfeedMessage[index] = String.Format("Infeed {0} still active; ignoring {1}", (index + 1).ToString(), infeedData);
+                AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
+            }
+            else
+            {
+                InfeedMessage[index] = String.Format("Infeed {0} updated with {1}", (index + 1).ToString(), StringifyControlChars(infeedData));
+                AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
+                int x = infeedData.IndexOf(",") + 1;
+                string plu = infeedData.Substring(0, Infeed[index].PLULength);
+                string ppk = infeedData.Substring(x, Infeed[index].PPKLength - 1);
+                DataHold[index].Enqueue(new PacketInfo(plu, ppk));
+
+                if (DataHold[index].Count > 0)
+                {
+                    Infeed[index].SendScenario2 = true;
+                    scenTimer[index].Start();
+                    LookUpAndSend(index, 1);
+                }
             }
         }
 
@@ -225,14 +248,15 @@ namespace PackM8
                 if (Infeed[i].SendScenario2)
                 {
                     Infeed[i].SendScenario2 = false;
-                    LookUpAndSend(i, 2);
+                    scenTimer[i].Stop();
+                    LookUpAndSend(i, 2);                  
                 }
             }
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
         {
-           InfeedMessage[index] = String.Format("Infeed {0} received data: {1}", (index+1).ToString(), Infeed[index].ReceivedData);
+           InfeedMessage[index] = String.Format("Infeed {0} received data: {1}", (index+1).ToString(), StringifyControlChars(Infeed[index].ReceivedData));
            AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
         }
 

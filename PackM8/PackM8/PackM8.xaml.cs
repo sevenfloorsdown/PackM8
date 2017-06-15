@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PackM8
 {
@@ -33,7 +23,7 @@ namespace PackM8
     {
 
         private static Mutex mutex = new Mutex(true, "1659aff2-7d2c-48f5-8557-a4efd694d16d");
-        private static string versionInfo = "1.0.0.0";
+        private static string versionInfo = "1.0.0.2a";
         private static string displayName = "PackM8";
         private static string showInfo = displayName + " v: " + versionInfo;
 
@@ -77,74 +67,66 @@ namespace PackM8
             packM8Engine = new PackM8Engine(ini);
             packM8Engine.StartEngine();
 
-            try
+            for (int i = 1; i <= NumChannels; i++)
             {
-                switch (NumChannels)
+                try
                 {
-                    case 1:
-                        lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");
-                        lineOutput0.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
-                        lineInputCxn0.Content = ini.GetSettingString("COMPort", "COM1", "InFeed1");
-                        lineOutputCxn0.Content = ini.GetSettingString("COMPort", "COM6", "OutFeed1");
-                        packM8Engine.Infeed[0].DataUpdated += new InfeedEventHandler(InputReceivedListener);
-                        packM8Engine.Infeed[0].DataReceived += new InfeedEventHandler(InputReceivedListener);
-                        break;
-                    case 2:
-                        lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed2", "InFeed2");
-                        lineOutput1.Content = ini.GetSettingString("OutFeedName", "OutFeed2", "OutFeed2");
-                        lineInputCxn1.Content = ini.GetSettingString("COMPort", "COM2", "InFeed2");
-                        lineOutputCxn1.Content = ini.GetSettingString("COMPort", "COM7", "OutFeed2");
-                        packM8Engine.Infeed[1].DataUpdated += new InfeedEventHandler(InputReceivedListener);
-                        break;
-                    case 3:
-                        lineInput2.Content = ini.GetSettingString("InFeedName", "InFeed3", "InFeed3");
-                        lineOutput2.Content = ini.GetSettingString("OutFeedName", "OutFeed3", "OutFeed3");
-                        lineInputCxn2.Content = ini.GetSettingString("COMPort", "COM3", "InFeed3");
-                        lineOutputCxn2.Content = ini.GetSettingString("COMPort", "COM8", "OutFeed3");
-                        packM8Engine.Infeed[2].DataUpdated += new InfeedEventHandler(InputReceivedListener);
-                        break;
-                    case 4:
-                        lineInput3.Content = ini.GetSettingString("InFeedName", "InFeed4", "InFeed4");
-                        lineOutput3.Content = ini.GetSettingString("OutFeedName", "OutFeed4", "OutFeed4");
-                        lineInputCxn3.Content = ini.GetSettingString("COMPort", "COM4", "InFeed4");
-                        lineOutputCxn3.Content = ini.GetSettingString("COMPort", "COM9", "OutFeed4");
-                        packM8Engine.Infeed[3].DataUpdated += new InfeedEventHandler(InputReceivedListener);
-                        break;
-                    default:
-                        lineInput4.Content = ini.GetSettingString("InFeedName", "InFeed5", "InFeed5");
-                        lineOutput4.Content = ini.GetSettingString("OutFeedName", "OutFeed5", "OutFeed5");
-                        lineInputCxn4.Content = ini.GetSettingString("COMPort", "COM5", "InFeed5");
-                        lineOutputCxn4.Content = ini.GetSettingString("COMPort", "COM10", "OutFeed5");
-                        packM8Engine.Infeed[4].DataUpdated += new InfeedEventHandler(InputReceivedListener);
-                        break;
+                    switch (i)
+                    {
+                        case 1:
+                            lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");
+                            lineOutput0.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
+                            lineInputCxn0.Content = ini.GetSettingString("COMPort", "COM1", "InFeed1");
+                            lineOutputCxn0.Content = ini.GetSettingString("COMPort", "COM6", "OutFeed1");
+                            packM8Engine.Infeed[0].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[0].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            break;
+                        case 2:
+                            lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed2", "InFeed2");
+                            lineOutput1.Content = ini.GetSettingString("OutFeedName", "OutFeed2", "OutFeed2");
+                            lineInputCxn1.Content = ini.GetSettingString("COMPort", "COM2", "InFeed2");
+                            lineOutputCxn1.Content = ini.GetSettingString("COMPort", "COM7", "OutFeed2");
+                            packM8Engine.Infeed[1].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[1].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            break;
+                        case 3:
+                            lineInput2.Content = ini.GetSettingString("InFeedName", "InFeed3", "InFeed3");
+                            lineOutput2.Content = ini.GetSettingString("OutFeedName", "OutFeed3", "OutFeed3");
+                            lineInputCxn2.Content = ini.GetSettingString("COMPort", "COM3", "InFeed3");
+                            lineOutputCxn2.Content = ini.GetSettingString("COMPort", "COM8", "OutFeed3");
+                            packM8Engine.Infeed[2].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[2].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            break;
+                        case 4:
+                            lineInput3.Content = ini.GetSettingString("InFeedName", "InFeed4", "InFeed4");
+                            lineOutput3.Content = ini.GetSettingString("OutFeedName", "OutFeed4", "OutFeed4");
+                            lineInputCxn3.Content = ini.GetSettingString("COMPort", "COM4", "InFeed4");
+                            lineOutputCxn3.Content = ini.GetSettingString("COMPort", "COM9", "OutFeed4");
+                            packM8Engine.Infeed[3].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[3].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            break;
+                        default:
+                            lineInput4.Content = ini.GetSettingString("InFeedName", "InFeed5", "InFeed5");
+                            lineOutput4.Content = ini.GetSettingString("OutFeedName", "OutFeed5", "OutFeed5");
+                            lineInputCxn4.Content = ini.GetSettingString("COMPort", "COM5", "InFeed5");
+                            lineOutputCxn4.Content = ini.GetSettingString("COMPort", "COM10", "OutFeed5");
+                            packM8Engine.Infeed[4].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[4].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    AppLogger.Log(LogLevel.ERROR, String.Format("Incorrect number of channel set: {1} {2}.", NumChannels.ToString(), e.Message));
                 }
             }
-            catch (Exception e)
-            {
-                AppLogger.Log(LogLevel.ERROR, String.Format("Incorrect number of channel set: {1} {2}.", NumChannels.ToString(), e.Message));
-            }
-
             
-
             MessageArea.Content = packM8Engine.Message;
             // for future messages
+            packM8Engine.DisplayUpdated += new packM8ChannelEventHandler(DisplayMessageListener);
             packM8Engine.MessageUpdated += new packM8EngineEventHandler(ModelMessageListener);
 
             ShowRunningLogs(packM8Engine.LookupLoaded);
-
-            // For debugging purposes only -------------------------------------------
-            /*bool swTrigEnabled = Properties.Settings.Default.EnableSWTrigger;
-            System.Windows.Visibility amIVisible = swTrigEnabled ?
-                                                   System.Windows.Visibility.Visible :
-                                                   System.Windows.Visibility.Hidden;
-            AcquireButton.Visibility = amIVisible;
-            ChannelChoice.Visibility = amIVisible;
-            if (swTrigEnabled)
-            {
-                for (int i = 0; i < NumChannels; i++)
-                    ChannelChoice.Items.Add(i);
-                ChannelChoice.SelectedIndex = 0;
-            }*/
         }
 
         private void ShowRunningLogs(bool value)
@@ -159,9 +141,9 @@ namespace PackM8
                                    = runningLog0.Visibility;
         }
 
-
-        private void UpdateLogDisplay(int channel, string entry)
+        private void DisplayMessageListener(object sender, EventArgs e, int channel)
         {
+            string entry = packM8Engine.DisplayMessage[channel];
             if (!this.Dispatcher.HasShutdownFinished)
             {
                 if (this.Dispatcher.CheckAccess()) SetLogEntry(channel, entry);
@@ -222,25 +204,6 @@ namespace PackM8
                 else this.Dispatcher.Invoke((Action)(() => { SetLogEntry(channel, packM8Engine.InfeedMessage[channel]); }));
             }
         }
-
-        //-------------------------------------------------------------------
-        private void CommonOutputReceivedListener(object sender, int channel)
-        { UpdateLogDisplay(channel, packM8Engine.OutfeedMessage[channel]); }
-
-        private void OutputReceivedListener0(object sender, EventArgs e)
-        { CommonOutputReceivedListener(sender, 0); }
-
-        private void OutputReceivedListener1(object sender, EventArgs e)
-        { CommonOutputReceivedListener(sender, 1); }
-
-        private void OutputReceivedListener2(object sender, EventArgs e)
-        { CommonOutputReceivedListener(sender, 2); }
-
-        private void OutputReceivedListener3(object sender, EventArgs e)
-        { CommonOutputReceivedListener(sender, 3); }
-
-        private void OutputReceivedListener4(object sender, EventArgs e)
-        { CommonOutputReceivedListener(sender, 4); }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

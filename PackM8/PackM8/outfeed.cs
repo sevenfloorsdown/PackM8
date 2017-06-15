@@ -72,8 +72,6 @@ namespace PackM8
         public int InputPPKLength { get; set; }
         public int OutputPLULength { get; set; }
         public int OutputPPKLength { get; set; }
-        public string ErrorPLU { get; set; }
-        public string ErrorPPK { get; set; }
 
         public List<MessageFormat> OutputMessage { get; set; }
         public OutFeed(SerialSettings settings)
@@ -86,9 +84,9 @@ namespace PackM8
             OutputMessage = new List<MessageFormat>();
         }
 
-        public string CreateErrorOutputMessage(string message, int scenario)
+        public string CreateErrorOutputMessage(string plu, string ppk, string message, int scenario)
         {
-            _outputMessage = OutputMessage[scenario].GetFormattedMessage(ErrorPLU, ErrorPPK, 0, message, true);
+            _outputMessage = OutputMessage[scenario].GetFormattedMessage(plu, ppk, 0, message, true);
             return _outputMessage;
         }
 
@@ -97,6 +95,7 @@ namespace PackM8
             string outputPlu = String.Empty;
             string outputPpk = String.Empty;
             string message = description;
+            int scen = scenario - 1;
             try
             {
                 int startX = InputPLULength - OutputPLULength;
@@ -108,7 +107,7 @@ namespace PackM8
             {
                 message = String.Format("Mismatch with input and output PLU lengths: {0} vs {1}, {2}",
                     InputPLULength.ToString(), OutputPLULength.ToString(), e.Message);
-                _outputMessage = OutputMessage[scenario].GetFormattedMessage(ErrorPLU, ErrorPPK, 0, message, true);
+                _outputMessage = OutputMessage[scen].GetFormattedMessage("xxxxxx", "yyyyy", 0, message, true);
                 throw new Exception(message);
             }
             try
@@ -124,10 +123,10 @@ namespace PackM8
             {
                 message = String.Format("Mismatch with input and output PPK lengths: {0} vs {1}, {2}",
                     InputPPKLength.ToString(), OutputPPKLength.ToString(), e.Message);
-                _outputMessage = OutputMessage[scenario].GetFormattedMessage(ErrorPLU, ErrorPPK, 0, message, true);
+                _outputMessage = OutputMessage[scen].GetFormattedMessage("xxxxxx", "yyyyy", 0, message, true);
                 throw new Exception(message);
             }
-            _outputMessage = OutputMessage[scenario].GetFormattedMessage(outputPlu, outputPpk, quantity, message);
+            _outputMessage = OutputMessage[scen].GetFormattedMessage(outputPlu, outputPpk, quantity, message);
             return _outputMessage;
         }
 
