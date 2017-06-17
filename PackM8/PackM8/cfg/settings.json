@@ -1,13 +1,13 @@
 {
   "Root": "C:\\DSITec\\",
-  "RunningLogLength": 5,
-  "NumberOfChannels": 1,
+  "RunningLogLength": 10,
+  "NumberOfChannels": 8,
   "LookupFile": "C:\\DSITec\\data\\MasterProduct.csv",
   "LookupKey": "ProductCode",
   "LookupErrorMessage": "Price/Poduct not found",
   "LookupDescColumn": "Description",
   "LookupPiecesColumn": "PiecesPerCarton",
-  "ScenarioFollowUpSec":  10,
+  "ScenarioFollowUpSec": 10,
   "Logging": {
     "LogLevel": "Verbose",
     "LogFile": "packm8",
@@ -30,6 +30,322 @@
   },
   "OutFeed1": {
     "OutFeedName": "OutFeed1",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+
+  "InFeed2": {
+    "InFeedName": "Infeed2",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed2": {
+    "OutFeedName": "OutFeed2",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed3": {
+    "InFeedName": "Infeed3",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed3": {
+    "OutFeedName": "OutFeed3",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed4": {
+    "InFeedName": "Infeed4",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed4": {
+    "OutFeedName": "OutFeed4",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed5": {
+    "InFeedName": "Infeed5",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed5": {
+    "OutFeedName": "OutFeed5",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed6": {
+    "InFeedName": "Infeed6",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed6": {
+    "OutFeedName": "OutFeed6",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed7": {
+    "InFeedName": "Infeed7",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed7": {
+    "OutFeedName": "OutFeed7",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed8": {
+    "InFeedName": "Infeed8",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed8": {
+    "OutFeedName": "OutFeed8",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed9": {
+    "InFeedName": "Infeed9",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed9": {
+    "OutFeedName": "OutFeed9",
+    "COMPort": "COM9",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "QuantityLength": 2,
+    "Format1": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN][VT]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: [FF]"
+    },
+    "Format2": {
+      "PayloadHeader": "[DC4][SO][DC2][NAK][SYN]",
+      "PayloadFooter": "",
+      "QuantityTag": "QTY: "
+    }
+  },
+  "InFeed10": {
+    "InFeedName": "Infeed10",
+    "COMPort": "COM5",
+    "Baudrate": 9600,
+    "Databits": 8,
+    "Parity": "None",
+    "StopBits": 1,
+    "Header": "[STX]",
+    "Footer": "[ETX]",
+    "PLULength": 6,
+    "PPKLength": 5,
+    "MessageFormat": "^[0-9a-zA-z]{6,6},[0-9]{4,4} $"
+  },
+  "OutFeed10": {
+    "OutFeedName": "OutFeed10",
     "COMPort": "COM9",
     "Baudrate": 9600,
     "Databits": 8,

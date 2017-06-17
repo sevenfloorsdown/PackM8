@@ -1078,9 +1078,7 @@ namespace PackM8
                 InputPLULength = inputPLULen,
                 InputPPKLength = inputPPKLen,
                 OutputPLULength = outputPLULen,
-                OutputPPKLength = outputPPKLen,
-                ErrorPLU = "xxxxxx",
-                ErrorPPK = "yyy.yy "
+                OutputPPKLength = outputPPKLen
             };
             DUT.OutputMessage.Add(
                 new MessageFormat(
@@ -1160,12 +1158,14 @@ namespace PackM8
             string errMsg = "THIS IS AN ERROR MESSAGE";
             for (int x = 0; x < 2; x++)
             {
-                string output = DUT.CreateErrorOutputMessage(errMsg, x);
+                string errPlu = "xxxxxx";
+                string errPpk = "yyyyy";
+                string output = DUT.CreateErrorOutputMessage(errPlu, errPpk, errMsg, x);
                 string expected;
                 if (x == 0)
-                    expected = payloadHeader1 + DUT.ErrorPLU + "|" + DUT.ErrorPPK + errMsg;
+                    expected = payloadHeader1 + errPlu + "|" + errPpk + errMsg;
                 else
-                    expected = payloadHeader2 + DUT.ErrorPLU + "|" + DUT.ErrorPPK + errMsg;
+                    expected = payloadHeader2 + errPlu + "|" + errPpk + errMsg;
                 Assert.AreEqual(expected, output);
             }
         }

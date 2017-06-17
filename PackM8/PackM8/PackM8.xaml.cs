@@ -29,6 +29,8 @@ namespace PackM8
 
         private PackM8Engine packM8Engine;
         private static int NumChannels = 5;
+        private static int InitialHeight = 615;
+        private static int ChannelHeight = 120;
         private static int RunningLogLength;
         private static settingsJSONutils ini;
 
@@ -65,8 +67,9 @@ namespace PackM8
             if (RunningLogLength < 10) RunningLogLength = 10; // Arbitrary default
 
             packM8Engine = new PackM8Engine(ini);
-            packM8Engine.StartEngine();
+            //packM8Engine.StartEngine(); // CHIMICHANGA
 
+            LayoutGrid.Height = InitialHeight;
             for (int i = 1; i <= NumChannels; i++)
             {
                 try
@@ -74,12 +77,17 @@ namespace PackM8
                     switch (i)
                     {
                         case 1:
-                            lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");
+                            lineInput0.Content = ini.GetSettingString("InFeedName", "InFeed1", "InFeed1");                          
                             lineOutput0.Content = ini.GetSettingString("OutFeedName", "OutFeed1", "OutFeed1");
                             lineInputCxn0.Content = ini.GetSettingString("COMPort", "COM1", "InFeed1");
                             lineOutputCxn0.Content = ini.GetSettingString("COMPort", "COM6", "OutFeed1");
                             packM8Engine.Infeed[0].DataUpdated += new InfeedEventHandler(InputReceivedListener);
                             packM8Engine.Infeed[0].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput0.Visibility = Visibility.Visible;
+                            lineOutput0.Visibility = Visibility.Visible;
+                            lineInputCxn0.Visibility = Visibility.Visible;
+                            lineOutputCxn0.Visibility = Visibility.Visible;
+                            runningLog0.Visibility = Visibility.Visible;
                             break;
                         case 2:
                             lineInput1.Content = ini.GetSettingString("InFeedName", "InFeed2", "InFeed2");
@@ -88,6 +96,11 @@ namespace PackM8
                             lineOutputCxn1.Content = ini.GetSettingString("COMPort", "COM7", "OutFeed2");
                             packM8Engine.Infeed[1].DataUpdated += new InfeedEventHandler(InputReceivedListener);
                             packM8Engine.Infeed[1].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput1.Visibility = Visibility.Visible;
+                            lineOutput1.Visibility = Visibility.Visible;
+                            lineInputCxn1.Visibility = Visibility.Visible;
+                            lineOutputCxn1.Visibility = Visibility.Visible;
+                            runningLog1.Visibility = Visibility.Visible;
                             break;
                         case 3:
                             lineInput2.Content = ini.GetSettingString("InFeedName", "InFeed3", "InFeed3");
@@ -96,6 +109,11 @@ namespace PackM8
                             lineOutputCxn2.Content = ini.GetSettingString("COMPort", "COM8", "OutFeed3");
                             packM8Engine.Infeed[2].DataUpdated += new InfeedEventHandler(InputReceivedListener);
                             packM8Engine.Infeed[2].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput2.Visibility = Visibility.Visible;
+                            lineOutput2.Visibility = Visibility.Visible;
+                            lineInputCxn2.Visibility = Visibility.Visible;
+                            lineOutputCxn2.Visibility = Visibility.Visible;
+                            runningLog2.Visibility = Visibility.Visible;
                             break;
                         case 4:
                             lineInput3.Content = ini.GetSettingString("InFeedName", "InFeed4", "InFeed4");
@@ -104,14 +122,94 @@ namespace PackM8
                             lineOutputCxn3.Content = ini.GetSettingString("COMPort", "COM9", "OutFeed4");
                             packM8Engine.Infeed[3].DataUpdated += new InfeedEventHandler(InputReceivedListener);
                             packM8Engine.Infeed[3].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput3.Visibility = Visibility.Visible;
+                            lineOutput3.Visibility = Visibility.Visible;
+                            lineInputCxn3.Visibility = Visibility.Visible;
+                            lineOutputCxn3.Visibility = Visibility.Visible;
+                            runningLog3.Visibility = Visibility.Visible;
                             break;
-                        default:
+                        case 5:
                             lineInput4.Content = ini.GetSettingString("InFeedName", "InFeed5", "InFeed5");
                             lineOutput4.Content = ini.GetSettingString("OutFeedName", "OutFeed5", "OutFeed5");
                             lineInputCxn4.Content = ini.GetSettingString("COMPort", "COM5", "InFeed5");
                             lineOutputCxn4.Content = ini.GetSettingString("COMPort", "COM10", "OutFeed5");
                             packM8Engine.Infeed[4].DataUpdated += new InfeedEventHandler(InputReceivedListener);
                             packM8Engine.Infeed[4].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput4.Visibility = Visibility.Visible;
+                            lineOutput4.Visibility = Visibility.Visible;
+                            lineInputCxn4.Visibility = Visibility.Visible;
+                            lineOutputCxn4.Visibility = Visibility.Visible;
+                            runningLog4.Visibility = Visibility.Visible;
+                            break;
+                        case 6:
+                            lineInput5.Content = ini.GetSettingString("InFeedName", "InFeed6", "InFeed6");
+                            lineOutput5.Content = ini.GetSettingString("OutFeedName", "OutFeed6", "OutFeed6");
+                            lineInputCxn5.Content = ini.GetSettingString("COMPort", "COM11", "InFeed6");
+                            lineOutputCxn5.Content = ini.GetSettingString("COMPort", "COM12", "OutFeed6");
+                            packM8Engine.Infeed[5].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[5].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput5.Visibility = Visibility.Visible;
+                            lineOutput5.Visibility = Visibility.Visible;
+                            lineInputCxn5.Visibility = Visibility.Visible;
+                            lineOutputCxn5.Visibility = Visibility.Visible;
+                            runningLog5.Visibility = Visibility.Visible;
+                            LayoutGrid.Height += ChannelHeight;
+                            break;
+                        case 7:
+                            lineInput6.Content = ini.GetSettingString("InFeedName", "InFeed7", "InFeed7");
+                            lineOutput6.Content = ini.GetSettingString("OutFeedName", "OutFeed7", "OutFeed7");
+                            lineInputCxn6.Content = ini.GetSettingString("COMPort", "COM13", "InFeed7");
+                            lineOutputCxn6.Content = ini.GetSettingString("COMPort", "COM14", "OutFeed7");
+                            packM8Engine.Infeed[6].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[6].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput6.Visibility = Visibility.Visible;
+                            lineOutput6.Visibility = Visibility.Visible;
+                            lineInputCxn6.Visibility = Visibility.Visible;
+                            lineOutputCxn6.Visibility = Visibility.Visible;
+                            runningLog6.Visibility = Visibility.Visible;
+                            LayoutGrid.Height += ChannelHeight;
+                            break;
+                        case 8:
+                            lineInput7.Content = ini.GetSettingString("InFeedName", "InFeed8", "InFeed8");
+                            lineOutput7.Content = ini.GetSettingString("OutFeedName", "OutFeed8", "OutFeed8");
+                            lineInputCxn7.Content = ini.GetSettingString("COMPort", "COM15", "InFeed8");
+                            lineOutputCxn7.Content = ini.GetSettingString("COMPort", "COM16", "OutFeed8");
+                            packM8Engine.Infeed[7].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[7].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput7.Visibility = Visibility.Visible;
+                            lineOutput7.Visibility = Visibility.Visible;
+                            lineInputCxn7.Visibility = Visibility.Visible;
+                            lineOutputCxn7.Visibility = Visibility.Visible;
+                            runningLog7.Visibility = Visibility.Visible;
+                            LayoutGrid.Height += ChannelHeight;
+                            break;
+                        case 9:
+                            lineInput8.Content = ini.GetSettingString("InFeedName", "InFeed9", "InFeed9");
+                            lineOutput8.Content = ini.GetSettingString("OutFeedName", "OutFeed9", "OutFeed9");
+                            lineInputCxn8.Content = ini.GetSettingString("COMPort", "COM17", "InFeed9");
+                            lineOutputCxn8.Content = ini.GetSettingString("COMPort", "COM18", "OutFeed9");
+                            packM8Engine.Infeed[8].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[8].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput8.Visibility = Visibility.Visible;
+                            lineOutput8.Visibility = Visibility.Visible;
+                            lineInputCxn8.Visibility = Visibility.Visible;
+                            lineOutputCxn8.Visibility = Visibility.Visible;
+                            runningLog8.Visibility = Visibility.Visible;
+                            LayoutGrid.Height += ChannelHeight;
+                            break;
+                        default:
+                            lineInput9.Content = ini.GetSettingString("InFeedName", "InFeed10", "InFeed10");
+                            lineOutput9.Content = ini.GetSettingString("OutFeedName", "OutFeed10", "OutFeed10");
+                            lineInputCxn9.Content = ini.GetSettingString("COMPort", "COM19", "InFeed10");
+                            lineOutputCxn9.Content = ini.GetSettingString("COMPort", "COM20", "OutFeed10");
+                            packM8Engine.Infeed[9].DataUpdated += new InfeedEventHandler(InputReceivedListener);
+                            packM8Engine.Infeed[9].DataReceived += new InfeedEventHandler(InputReceivedListener);
+                            lineInput9.Visibility = Visibility.Visible;
+                            lineOutput9.Visibility = Visibility.Visible;
+                            lineInputCxn9.Visibility = Visibility.Visible;
+                            lineOutputCxn9.Visibility = Visibility.Visible;
+                            runningLog9.Visibility = Visibility.Visible;
+                            LayoutGrid.Height += ChannelHeight;
                             break;
                     }
                 }
@@ -190,6 +288,26 @@ namespace PackM8
                     runningLog4.Items.Insert(0, listEntry);
                     if (runningLog4.Items.Count > RunningLogLength) runningLog4.Items.RemoveAt(RunningLogLength);
                     break;
+                case 5:
+                    runningLog5.Items.Insert(0, listEntry);
+                    if (runningLog5.Items.Count > RunningLogLength) runningLog5.Items.RemoveAt(RunningLogLength);
+                    break;
+                case 6:
+                    runningLog6.Items.Insert(0, listEntry);
+                    if (runningLog6.Items.Count > RunningLogLength) runningLog6.Items.RemoveAt(RunningLogLength);
+                    break;
+                case 7:
+                    runningLog7.Items.Insert(0, listEntry);
+                    if (runningLog7.Items.Count > RunningLogLength) runningLog7.Items.RemoveAt(RunningLogLength);
+                    break;
+                case 8:
+                    runningLog8.Items.Insert(0, listEntry);
+                    if (runningLog8.Items.Count > RunningLogLength) runningLog8.Items.RemoveAt(RunningLogLength);
+                    break;
+                case 9:
+                    runningLog9.Items.Insert(0, listEntry);
+                    if (runningLog9.Items.Count > RunningLogLength) runningLog9.Items.RemoveAt(RunningLogLength);
+                    break;
                 default:
                     AppLogger.Log(LogLevel.ERROR, "Invalid channel: " + channel.ToString());
                     break;
@@ -239,9 +357,6 @@ namespace PackM8
             UpdateMessageArea();
         }
 
-        // For debugging-mode only
-        private void AcquireButton_Click(object sender, RoutedEventArgs e)
-        { }
 
     }
 

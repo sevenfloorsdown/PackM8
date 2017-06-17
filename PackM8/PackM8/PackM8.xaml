@@ -5,49 +5,61 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PackM8"
         mc:Ignorable="d"
-        Title="PackM8" Height="663" Width="986" Closing="Window_Closing" ResizeMode="CanMinimize">
-    <Grid Margin="10,10,2,3">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="105*"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Button Grid.ColumnSpan="2" Content="Refresh Database" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="111" Height="18" FontFamily="Arial" Click="Button_Click"/>
-        <Label x:Name="lineInput0" Content="Scanner 1&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,32,0,0" FontFamily="Arial"/>
-        <Label x:Name="lineInputCxn0" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,47,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <ListView x:Name="runningLog0" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,32,8,0" Grid.ColumnSpan="2" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto">
-        </ListView>
-        <Label x:Name="lineOutput0" Content="Coder 1&#xA;" HorizontalAlignment="Left" Margin="2,86,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineOutputCxn0" Content="" HorizontalAlignment="Left" Margin="2,101,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineInput1" Content="Scanner 2&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,152,0,0" FontFamily="Arial"/>
-        <Label x:Name="lineInputCxn1" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,166,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <ListView x:Name="runningLog1" Height="108" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,152,8,0" Grid.ColumnSpan="2" FontFamily="Arial">
-        </ListView>
-        <Label x:Name="lineOutput1" Content="Coder 2&#xA;" HorizontalAlignment="Left" Margin="2,205,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineOutputCxn1" Content="" HorizontalAlignment="Left" Margin="2,220,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineInput2" Content="Scanner 3&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" Margin="2,271,0,0" FontFamily="Arial"/>
-        <Label x:Name="lineInputCxn2" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="22" Margin="2,285,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <ListView x:Name="runningLog2" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,271,8,0" Grid.ColumnSpan="2" FontFamily="Arial">
-        </ListView>
-        <Label x:Name="lineOutput2" Content="Coder 3&#xA;" HorizontalAlignment="Left" Margin="2,324,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineOutputCxn2" Content="" HorizontalAlignment="Left" Margin="2,339,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineInput3" Content="Scanner 4&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,387,0,0" FontFamily="Arial"/>
-        <Label x:Name="lineInputCxn3" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,403,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <ListView x:Name="runningLog3" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,387,8,0" Grid.ColumnSpan="2" FontFamily="Arial">
-        </ListView>
-        <Label x:Name="lineOutput3" Content="Coder 4&#xA;" HorizontalAlignment="Left" Margin="2,441,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineOutputCxn3" Content="" HorizontalAlignment="Left" Margin="2,457,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineInput4" Content="Scanner 5&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,504,0,0" FontFamily="Arial"/>
-        <Label x:Name="lineInputCxn4" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,520,0,0" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <ListView x:Name="runningLog4" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="169,504,8,0" Grid.ColumnSpan="2" FontFamily="Arial">
-        </ListView>
-        <Label x:Name="lineOutput4" Content="Coder 5&#xA;" HorizontalAlignment="Left" Margin="2,558,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Label x:Name="lineOutputCxn4" Content="" HorizontalAlignment="Left" Margin="2,574,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial"/>
-        <Button x:Name="AcquireButton" Grid.ColumnSpan="2" Content="Acquire" HorizontalAlignment="Left" Margin="816,10,0,0" VerticalAlignment="Top" Width="75" Click="AcquireButton_Click" FontFamily="Arial" Height="15"/>
-        <ListBox x:Name="ChannelChoice" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="18" Margin="896,10,0,0" VerticalAlignment="Top" Width="60" FontFamily="Arial"/>
-        <Label x:Name="MessageArea" Grid.ColumnSpan="2" Content="" HorizontalAlignment="Left" Margin="169,0,0,0" VerticalAlignment="Top" Width="633" FontFamily="Arial" Height="26"/>
-    </Grid>
+        Title="PackM8" Height="650" Width="994" Closing="Window_Closing" ResizeMode="CanMinimize" >
+    <ScrollViewer x:Name="LayoutScrollViewer" Height="615" Width="977">
+        <Grid x:Name="LayoutGrid" Width="952" >
+            <Button Grid.ColumnSpan="2" Content="Refresh Database" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="111" Height="18" FontFamily="Arial" Click="Button_Click"/>
+            <Label x:Name="MessageArea" Content="" HorizontalAlignment="Left" Margin="140,1,0,0" VerticalAlignment="Top" Width="633" FontFamily="Arial" Height="26"/>
+            <Label x:Name="lineInput0" Content="Scanner 1&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,32,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn0" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,47,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog0" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,32,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden"/>
+            <Label x:Name="lineOutput0" Content="Coder 1&#xA;" HorizontalAlignment="Left" Margin="2,86,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn0" Content="" HorizontalAlignment="Left" Margin="2,101,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput1" Content="Scanner 2&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,152,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn1" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,166,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog1" Height="108" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,152,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput1" Content="Coder 2&#xA;" HorizontalAlignment="Left" Margin="2,205,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn1" Content="" HorizontalAlignment="Left" Margin="2,220,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput2" Content="Scanner 3&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" Margin="2,271,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn2" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="22" Margin="2,285,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog2" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,271,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput2" Content="Coder 3&#xA;" HorizontalAlignment="Left" Margin="2,324,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn2" Content="" HorizontalAlignment="Left" Margin="2,339,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput3" Content="Scanner 4&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,387,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn3" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,403,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog3" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,387,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput3" Content="Coder 4&#xA;" HorizontalAlignment="Left" Margin="2,441,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn3" Content="" HorizontalAlignment="Left" Margin="2,457,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput4" Content="Scanner 5&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,504,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn4" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,520,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog4" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,504,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput4" Content="Coder 5&#xA;" HorizontalAlignment="Left" Margin="2,558,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn4" Content="" HorizontalAlignment="Left" Margin="2,574,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput5" Content="Scanner 6&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,620,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn5" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,635,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog5" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,620,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput5" Content="Coder 6&#xA;" HorizontalAlignment="Left" Margin="2,674,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn5" Content="" HorizontalAlignment="Left" Margin="2,689,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput6" Content="Scanner 7&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,740,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn6" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,754,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog6" Height="108" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,740,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput6" Content="Coder 7&#xA;" HorizontalAlignment="Left" Margin="2,793,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn6" Content="" HorizontalAlignment="Left" Margin="2,808,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput7" Content="Scanner 8&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" Margin="2,859,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn7" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="22" Margin="2,873,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog7" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,859,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput7" Content="Coder 8&#xA;" HorizontalAlignment="Left" Margin="2,912,0,0" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn7" Content="" HorizontalAlignment="Left" Margin="2,927,0,0" VerticalAlignment="Top" Width="162" Height="22" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput8" Content="Scanner 9&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="26" Grid.ColumnSpan="2" Margin="2,975,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn8" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,991,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog8" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,975,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput8" Content="Coder 9&#xA;" HorizontalAlignment="Left" Margin="2,1029,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn8" Content="" HorizontalAlignment="Left" Margin="2,1045,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInput9" Content="Scanner 10&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="27" Grid.ColumnSpan="2" Margin="2,1092,0,0" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineInputCxn9" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Width="162" Height="21" Margin="2,1108,0,0" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <ListView x:Name="runningLog9" Height="109" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.531" Margin="82,1092,10,0" FontFamily="Arial" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="Hidden" Grid.Column="2"/>
+            <Label x:Name="lineOutput9" Content="Coder 10&#xA;" HorizontalAlignment="Left" Margin="2,1146,0,0" VerticalAlignment="Top" Width="162" Height="25" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+            <Label x:Name="lineOutputCxn9" Content="" HorizontalAlignment="Left" Margin="2,1162,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.ColumnSpan="2" FontFamily="Arial" Visibility="Hidden"/>
+        </Grid>
+    </ScrollViewer>
 </Window>

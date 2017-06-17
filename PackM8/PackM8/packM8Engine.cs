@@ -66,7 +66,7 @@ namespace PackM8
             OutfeedMessage = new List<string>();
             DisplayMessage = new List<string>();
 
-            InitializeFeeds();
+            InitializeFeeds(); 
             LookUpErrorMessage = AppSettings.GetSettingString("LookupErrorMessage", "Product not found");
             String lookupFile = AppSettings.GetSettingString("LookupFile", ".");
             
