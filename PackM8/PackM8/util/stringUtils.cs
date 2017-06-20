@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace PackM8
 {
@@ -8,28 +10,48 @@ namespace PackM8
      **/
     public class StringUtils
     {
+        private static Dictionary<string, string> ControlChars = new Dictionary<string, string>
+        {
+            {"NUL", "\x00"},
+            {"SOH", "\x01"},
+            {"STX", "\x02"},
+            {"ETX", "\x03"},
+            {"EOT", "\x04"},
+            {"ENQ", "\x05"},
+            {"ACK", "\x06"},
+            {"BEL", "\x07"},
+            {"BS",  "\x08"},
+            {"TAB", "\x09"},
+            {"LF",  "\x0a"},
+            {"VT",  "\x0b"},
+            {"FF",  "\x0c"},
+            {"CR",  "\x0d"},
+            {"SO",  "\x0e"},
+            {"SI",  "\x0f"},
+            {"DLE", "\x10"},
+            {"DC1", "\x11"},
+            {"DC2", "\x12"},
+            {"DC3", "\x13"},
+            {"DC4", "\x14"},
+            {"NAK", "\x15"},
+            {"SYN", "\x16"}
+        };
+
         public static string TranslateAsASCII(string input)
         {
             string hxt = input.ToUpper();
             string txt = hxt;
-            if (txt == "SOH") hxt = "\x01";
-            if (txt == "STX") hxt = "\x02";
-            if (txt == "ETX") hxt = "\x03";
-            if (txt == "EOT") hxt = "\x04";
-            if (txt == "ENQ") hxt = "\x05";
-            if (txt == "ACK") hxt = "\x06";
-            if (txt == "LF") hxt = "\x0a";
-            if (txt == "VT") hxt = "\x0b";
-            if (txt == "FF") hxt = "\x0c";
-            if (txt == "CR") hxt = "\x0d";
-            if (txt == "SO") hxt = "\x0e";
-            if (txt == "SI") hxt = "\x0f";
-            if (txt == "DC1") hxt = "\x11";
-            if (txt == "DC2") hxt = "\x12";
-            if (txt == "DC3") hxt = "\x13";
-            if (txt == "DC4") hxt = "\x14";
-            if (txt == "NAK") hxt = "\x15";
-            if (txt == "SYN") hxt = "\x16";
+            if (ControlChars.ContainsKey(txt))
+                hxt = ControlChars[txt];
+            return hxt;
+        }
+
+        public static string StringifyControlChars(String input)
+        {
+            List<string> chars = new List<string>( ControlChars.Keys);
+            string hxt = Regex.Replace(input, @"\p{Cc}",
+                //a => string.Format("[{0:X2}]", (byte)a.Value[0]));
+                a => string.Format("[{0}]", chars[(byte)a.Value[0]]));
             return hxt;
         }
 

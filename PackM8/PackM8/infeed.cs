@@ -54,7 +54,6 @@ namespace PackM8
         {
             // collect data until delimiter comes in         
             ReceivedData = System.Text.Encoding.UTF8.GetString(e.Data);           
-            OnDataReceived(EventArgs.Empty, Index);
             if (BufferDataUpdated(ReceivedData))
                 OnDataUpdated(EventArgs.Empty, Index);         
         }
@@ -82,6 +81,8 @@ namespace PackM8
                     if (!String.IsNullOrEmpty(InFeedData))
                         if (InFeedData.Equals(sub)) return false;
                     InFeedData = sub;
+                    ReceivedData = Header + sub + Footer;
+                    OnDataReceived(EventArgs.Empty, Index);
                     buffer = string.Empty;
                     return true;
                 }
@@ -102,6 +103,8 @@ namespace PackM8
                         if (!String.IsNullOrEmpty(InFeedData))
                             if (InFeedData.Equals(buffer)) return false;
                         InFeedData = buffer;
+                        ReceivedData = Header + buffer + Footer;
+                        OnDataReceived(EventArgs.Empty, Index);
                         buffer = string.Empty;
                         return true;
                     }

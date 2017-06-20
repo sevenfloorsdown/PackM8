@@ -52,12 +52,6 @@ namespace PackM8
         protected virtual void OnMessageUpdated(EventArgs e) { MessageUpdated?.Invoke(this, e); }
         protected virtual void OnChannelUpdated(EventArgs e, int channel) { DisplayUpdated?.Invoke(this, e, channel); }
 
-        public string StringifyControlChars(String input)
-        {
-            return Regex.Replace(input, @"\p{Cc}",
-                a => string.Format("[{0:X2}]", (byte)a.Value[0]));
-        }
-
         public PackM8Engine(settingsJSONutils settings)
         {
             AppSettings = settings;
@@ -210,7 +204,7 @@ namespace PackM8
                                     onHold.PPK,
                                     LookUpErrorMessage, 1);
             Outfeed[index].SendOutputMessage();
-            DisplayMessage[index] = String.Format("Outfeed {0}: send {1}", (index + 1).ToString(), StringifyControlChars(outputMsg));
+            DisplayMessage[index] = String.Format("Outfeed {0}: send {1}", (index + 1).ToString(), StringUtils.StringifyControlChars(outputMsg));
             OnChannelUpdated(new EventArgs(), index);
             AppLogger.Log(LogLevel.INFO, DisplayMessage[index]);
         }
@@ -225,7 +219,7 @@ namespace PackM8
             }
             else
             {
-                InfeedMessage[index] = String.Format("Infeed {0} updated with {1}", (index + 1).ToString(), StringifyControlChars(infeedData));
+                InfeedMessage[index] = String.Format("Infeed {0} updated with {1}", (index + 1).ToString(), StringUtils.StringifyControlChars(infeedData));
                 AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
                 int x = infeedData.IndexOf(",") + 1;
                 string plu = infeedData.Substring(0, Infeed[index].PLULength);
@@ -256,7 +250,7 @@ namespace PackM8
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
         {
-           InfeedMessage[index] = String.Format("Infeed {0} received data: {1}", (index+1).ToString(), StringifyControlChars(Infeed[index].ReceivedData));
+           InfeedMessage[index] = String.Format("Infeed {0} received data: {1}", (index+1).ToString(), StringUtils.StringifyControlChars(Infeed[index].ReceivedData));
            AppLogger.Log(LogLevel.INFO, InfeedMessage[index]);
         }
 

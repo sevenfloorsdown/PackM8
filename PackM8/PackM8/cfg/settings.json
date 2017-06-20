@@ -1,7 +1,7 @@
 {
   "Root": "C:\\DSITec\\",
   "RunningLogLength": 10,
-  "NumberOfChannels": 8,
+  "NumberOfChannels": 1,
   "LookupFile": "C:\\DSITec\\data\\MasterProduct.csv",
   "LookupKey": "ProductCode",
   "LookupErrorMessage": "Price/Poduct not found",

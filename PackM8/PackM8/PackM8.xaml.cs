@@ -23,7 +23,7 @@ namespace PackM8
     {
 
         private static Mutex mutex = new Mutex(true, "1659aff2-7d2c-48f5-8557-a4efd694d16d");
-        private static string versionInfo = "1.0.0.2a";
+        private static string versionInfo = "1.0.0.3";
         private static string displayName = "PackM8";
         private static string showInfo = displayName + " v: " + versionInfo;
 
@@ -67,7 +67,7 @@ namespace PackM8
             if (RunningLogLength < 10) RunningLogLength = 10; // Arbitrary default
 
             packM8Engine = new PackM8Engine(ini);
-            //packM8Engine.StartEngine(); // CHIMICHANGA
+            packM8Engine.StartEngine(); 
 
             LayoutGrid.Height = InitialHeight;
             for (int i = 1; i <= NumChannels; i++)
