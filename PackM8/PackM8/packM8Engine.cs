@@ -251,7 +251,7 @@ namespace PackM8
         
         private void PlainSerialDataReceivedListener(object sender, EventArgs e, int index)
         {
-            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} received raw data: {1}", (index + 1).ToString(), StringUtils.StringifyControlChars(Infeed[index].ReceivedData)));
+            AppLogger.Log(LogLevel.VERBOSE, String.Format("Infeed {0} received raw data: {1}", (index + 1).ToString(), StringUtils.StringifyControlChars(Infeed[index].ReceivedData)));
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
