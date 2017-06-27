@@ -23,7 +23,7 @@ namespace PackM8
     {
 
         private static Mutex mutex = new Mutex(true, "1659aff2-7d2c-48f5-8557-a4efd694d16d");
-        private static string versionInfo = "1.0.0.3";
+        private static string versionInfo = "1.0.0.3a";
         private static string displayName = "PackM8";
         private static string showInfo = displayName + " v: " + versionInfo;
 

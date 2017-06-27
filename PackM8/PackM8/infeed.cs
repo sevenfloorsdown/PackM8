@@ -25,10 +25,12 @@ namespace PackM8
         public bool SendScenario2 { get; set; }
         public event InfeedEventHandler DataUpdated = delegate { };
         public event InfeedEventHandler DataReceived = delegate { };
+        public event InfeedEventHandler RawDataReceived = delegate { };
 
         protected virtual void OnDataUpdated(EventArgs e, int index) { DataUpdated?.Invoke(this, e, index); }
         protected virtual void OnDataReceived(EventArgs e, int index) { DataReceived?.Invoke(this, e, index); }
-  
+        protected virtual void OnRawDataReceived(EventArgs e, int index) { RawDataReceived?.Invoke(this, e, index); }
+
         public string MessageFormat {
             get { return pattern;  }
             set
@@ -53,7 +55,8 @@ namespace PackM8
         void SerialDataReceived(object sender, SerialDataEventArgs e)
         {
             // collect data until delimiter comes in         
-            ReceivedData = System.Text.Encoding.UTF8.GetString(e.Data);           
+            ReceivedData = System.Text.Encoding.UTF8.GetString(e.Data);
+            OnRawDataReceived(EventArgs.Empty, Index);
             if (BufferDataUpdated(ReceivedData))
                 OnDataUpdated(EventArgs.Empty, Index);         
         }

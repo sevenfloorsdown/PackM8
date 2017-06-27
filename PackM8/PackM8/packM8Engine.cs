@@ -123,6 +123,7 @@ namespace PackM8
 
                     Infeed[i-1].DataUpdated += new InfeedEventHandler(InfeedDataUpdatedListener);
                     Infeed[i-1].DataReceived += new InfeedEventHandler(InfeedDataReceivedListener);
+                    Infeed[i-1].RawDataReceived += new InfeedEventHandler(PlainSerialDataReceivedListener);
 
                     AppLogger.Log(LogLevel.INFO, "Initializing Outfeeds...");
                     String nuIndex = (i + NumChannels).ToString();
@@ -246,6 +247,11 @@ namespace PackM8
                     LookUpAndSend(i, 2);                  
                 }
             }
+        }    
+        
+        private void PlainSerialDataReceivedListener(object sender, EventArgs e, int index)
+        {
+            AppLogger.Log(LogLevel.INFO, String.Format("Infeed {0} received raw data: {1}", (index + 1).ToString(), StringUtils.StringifyControlChars(Infeed[index].ReceivedData)));
         }
 
         private void InfeedDataReceivedListener(object sender, EventArgs e, int index)
