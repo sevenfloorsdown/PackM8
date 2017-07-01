@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Timers;
 
 namespace PackM8
 {
@@ -23,7 +25,7 @@ namespace PackM8
     {
 
         private static Mutex mutex = new Mutex(true, "1659aff2-7d2c-48f5-8557-a4efd694d16d");
-        private static string versionInfo = "1.0.0.3a";
+        private static string versionInfo = "1.0.0.4";
         private static string displayName = "PackM8";
         private static string showInfo = displayName + " v: " + versionInfo;
 
@@ -33,6 +35,11 @@ namespace PackM8
         private static int ChannelHeight = 120;
         private static int RunningLogLength;
         private static settingsJSONutils ini;
+        private DateTime DBRefreshTime;
+        private static int RefreshTimeInMin;
+        private bool AutoRefreshDB = false;
+        private System.Timers.Timer DBRefreshTimer;
+        private static int ONEMINUTE = 60 * 1000;
 
         public MainWindow()
         {
@@ -61,6 +68,25 @@ namespace PackM8
             int n = showInfo.Length;
             string filler = new string('*', n);
             this.Title = showInfo;
+
+            String dbRefTime = ini.GetSettingString("DBRefreshTime", "");
+
+            if (!String.IsNullOrEmpty(dbRefTime))
+            {
+                try
+                {
+                    if (dbRefTime.Length == 4)
+                        dbRefTime = "0" + dbRefTime;
+                    DBRefreshTime = DateTime.ParseExact(dbRefTime + ":00", "HH:mm:ss", CultureInfo.InvariantCulture);
+                    AutoRefreshDB = true;
+                    RefreshTimeInMin = Convert.ToInt32(DBRefreshTime.TimeOfDay.TotalMinutes);
+                }
+                catch (FormatException e)
+                {
+                    AppLogger.Log(LogLevel.ERROR, "Invalid autorefresh time setting (" + dbRefTime + "); autorefresh NOT enabled");
+                    AutoRefreshDB = false;
+                }
+            }
 
             RunningLogLength = ini.GetSettingInteger("RunningLogLength", 5);
             NumChannels = ini.GetSettingInteger("NumberOfChannels", 5);
@@ -225,6 +251,24 @@ namespace PackM8
             packM8Engine.MessageUpdated += new packM8EngineEventHandler(ModelMessageListener);
 
             ShowRunningLogs(packM8Engine.LookupLoaded);
+
+            if (AutoRefreshDB && packM8Engine.LookupLoaded)
+            {
+                DBRefreshTimer = new System.Timers.Timer(ONEMINUTE);
+                DBRefreshTimer.Elapsed += OnTimerElapsed;
+                DBRefreshTimer.AutoReset = true;
+                DBRefreshTimer.Start();
+            }
+        }
+
+        private void OnTimerElapsed(Object source, ElapsedEventArgs e)
+        {
+            if (packM8Engine.LookupLoaded && AutoRefreshDB)
+            {
+                int nowMin = Convert.ToInt32(Math.Truncate(DateTime.Now.TimeOfDay.TotalMinutes - 0.5));
+                if (nowMin == RefreshTimeInMin)
+                    RefreshDB();
+            }
         }
 
         private void ShowRunningLogs(bool value)
@@ -343,14 +387,16 @@ namespace PackM8
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void RefreshDB()
         {
             if (!packM8Engine.LoadLookupFile(ini.GetSettingString("LookupFile", "")))
                 MessageArea.Content = packM8Engine.Message;
             else
-                MessageArea.Content = "database refreshed on " + DateTime.Now.ToString();
+                MessageArea.Content += "database refreshed on " + DateTime.Now.ToString();
             ShowRunningLogs(packM8Engine.LookupLoaded);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e) { RefreshDB(); }
 
         private void ModelMessageListener(object sender, EventArgs e)
         {

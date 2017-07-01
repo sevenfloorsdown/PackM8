@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using System.IO.Ports;
 using System.Timers;
-using System.Text.RegularExpressions;
 
 namespace PackM8
 {

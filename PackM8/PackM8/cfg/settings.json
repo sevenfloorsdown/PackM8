@@ -13,6 +13,8 @@
     "LogFile": "packm8",
     "DateTimeFormat": "dd/MM/yyyy hh:mm:ss.fff"
   },
+  "RefreshComment": "24-hour time format; HH:mm or H:mm only",
+  "DBRefreshTime": "15:44",  
   "Comment1": "Make sure PLULength and PPKLength-1 match the regex below;",
   "Comment2": "that is {PLULength, PLULength} and {PPKLength-1, PPKLength-1}",
   "InFeed1": {
