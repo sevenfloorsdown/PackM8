@@ -49,10 +49,21 @@ namespace PackM8
         public static string StringifyControlChars(String input)
         {
             List<string> chars = new List<string>( ControlChars.Keys);
-            string hxt = Regex.Replace(input, @"\p{Cc}",
-                //a => string.Format("[{0:X2}]", (byte)a.Value[0]));
-                a => string.Format("[{0}]", chars[(byte)a.Value[0]]));
-            return hxt;
+            try
+            {
+                string hxt = Regex.Replace(input, @"\p{Cc}",
+                    a => string.Format("[{0}]", chars[(byte)a.Value[0]]));
+                return hxt;
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                return Regex.Replace(input, @"\p{Cc}",
+                    a => string.Format("[{0:X2}]", (byte)a.Value[0]));
+            }
+            catch (Exception e)
+            {
+                return input;
+            }
         }
 
         public static string ParseIntoASCII(string input)
@@ -68,7 +79,7 @@ namespace PackM8
             }
             catch (ArgumentOutOfRangeException e)
             {
-                text = input; ;
+                text = input; 
             }
             return text;
         }
