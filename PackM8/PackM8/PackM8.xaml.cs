@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Timers;
+using System.Threading.Tasks;
 
 namespace PackM8
 {
@@ -25,7 +26,7 @@ namespace PackM8
     {
 
         private static Mutex mutex = new Mutex(true, "1659aff2-7d2c-48f5-8557-a4efd694d16d");
-        private static string versionInfo = "1.0.0.4a";
+        private static string versionInfo = "1.0.0.5";
         private static string displayName = "PackM8";
         private static string showInfo = displayName + " v: " + versionInfo;
 
@@ -79,7 +80,7 @@ namespace PackM8
                         dbRefTime = "0" + dbRefTime;
                     DBRefreshTime = DateTime.ParseExact(dbRefTime + ":00", "HH:mm:ss", CultureInfo.InvariantCulture);
                     AutoRefreshDB = true;
-                    RefreshTimeInMin = Convert.ToInt32(DBRefreshTime.TimeOfDay.TotalMinutes);
+                    RefreshTimeInMin = Convert.ToInt32(DBRefreshTime.TimeOfDay.TotalMinutes) - 1;
                 }
                 catch (FormatException e)
                 {
@@ -257,7 +258,15 @@ namespace PackM8
                 DBRefreshTimer = new System.Timers.Timer(ONEMINUTE);
                 DBRefreshTimer.Elapsed += OnTimerElapsed;
                 DBRefreshTimer.AutoReset = true;
-                DBRefreshTimer.Start();
+
+                Task.Factory.StartNew(() =>
+                {
+                    DateTime cur = DateTime.Now;
+                    int rem = ONEMINUTE  - (cur.Millisecond + cur.Second * 1000);
+                    Thread.Sleep(rem);
+                    DBRefreshTimer.Start();
+                });
+               ;
             }
         }
 
@@ -266,7 +275,7 @@ namespace PackM8
             if (packM8Engine.LookupLoaded && AutoRefreshDB)
             {
                 int nowMin = Convert.ToInt32(Math.Truncate(DateTime.Now.TimeOfDay.TotalMinutes - 0.5));
-                if (nowMin == RefreshTimeInMin)
+                if (nowMin == RefreshTimeInMin) 
                     RefreshDB();
             }
         }
@@ -378,21 +387,23 @@ namespace PackM8
             AppLogger.Stop();
         }
 
-        private void UpdateMessageArea()
+        private void UpdateMessageArea(string message)
         {
             if (!this.Dispatcher.HasShutdownFinished)
             {
-                if (this.Dispatcher.CheckAccess()) MessageArea.Content = packM8Engine.Message;
-                else this.Dispatcher.Invoke((Action)(() => { MessageArea.Content = packM8Engine.Message; }));
+                if (this.Dispatcher.CheckAccess()) MessageArea.Content = message;
+                else this.Dispatcher.Invoke((Action)(() => { MessageArea.Content = message; }));
             }
         }
 
         private void RefreshDB()
         {
+            string txt = "";
             if (!packM8Engine.LoadLookupFile(ini.GetSettingString("LookupFile", "")))
-                MessageArea.Content = packM8Engine.Message;
+                txt = packM8Engine.Message;
             else
-                MessageArea.Content += "database refreshed on " + DateTime.Now.ToString();
+                txt = "database refreshed on " + DateTime.Now.ToString();
+            UpdateMessageArea(txt);
             ShowRunningLogs(packM8Engine.LookupLoaded);
         }
 
@@ -400,7 +411,7 @@ namespace PackM8
 
         private void ModelMessageListener(object sender, EventArgs e)
         {
-            UpdateMessageArea();
+            UpdateMessageArea(packM8Engine.Message);
         }
 
 
